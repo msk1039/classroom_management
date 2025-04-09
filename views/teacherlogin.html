@@ -1,0 +1,27 @@
+/classroom/views/teacherlogin.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSync - Teacher Login</title>
+    <link rel="stylesheet" href="/css/style2.css">
+</head>
+<body class="fade-in">
+    <main class="f">
+        <form data-role="teacher">
+            <span class="emoji">👩‍🏫</span>
+            <h2>Teacher Login</h2>
+            <input type="email" placeholder="Email" required>
+            <input type="password" placeholder="Password" required>
+            <div>
+                <label><input type="checkbox"> Keep me in</label>
+                <a href="#" class="l">Forgot?</a>
+            </div>
+            <button class="b">Login</button>
+            <p>New? <a href="/teacher-signup">Sign Up</a></p>
+        </form>
+    </main>
+    <script src="/js/auth.js"></script>
+</body>
+</html>

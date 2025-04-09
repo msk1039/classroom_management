@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Dashboard - EduSync</title>
+  <link rel="stylesheet" href="/css/style2.css" />
+  <style>
+    .dashboard {
+      max-width: 1000px;
+      margin: 2rem auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      border-radius: var(--r);
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      transition: transform var(--t), box-shadow var(--t);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card h3 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      color: #40c4ff;
+    }
+
+    .progress-bar {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      overflow: hidden;
+      height: 20px;
+      margin-top: 0.5rem;
+    }
+
+    .progress {
+      background: linear-gradient(to right, #40c4ff, #00bcd4);
+      height: 100%;
+      width: 70%; /* Example progress */
+    }
+
+    ul {
+      text-align: left;
+      padding-left: 1rem;
+    }
+
+    ul li {
+      margin: 0.5rem 0;
+    }
+  </style>
+</head>
+<body class="fade-in">
+  <main>
+    <h1>Welcome, Student 🎓</h1>
+    <p>Your learning dashboard</p>
+
+    <div class="dashboard">
+      <div class="card">
+        <h3>📘 Assignments</h3>
+        <ul>
+          <li>Math Homework - Due: Apr 12</li>
+          <li>Physics Lab Report - Due: Apr 14</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>🗂️ Task Manager</h3>
+        <ul>
+          <li>Revise Chapter 5</li>
+          <li>Submit History Project</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>📊 Progress Tracker</h3>
+        <p>Overall Task Completion: 70%</p>
+        <div class="progress-bar">
+          <div class="progress"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📢 Announcements</h3>
+        <ul>
+          <li>Guest Lecture on AI - Apr 10</li>
+          <li>Sports Day Registration Open</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>🗓️ Calendar</h3>
+        <ul>
+          <li>Apr 10: AI Seminar</li>
+          <li>Apr 12: Assignment Deadline</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+  <script src="/js/auth.js"></script>
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
+      // Get user info from localStorage
+      const userInfo = JSON.parse(localStorage.getItem('user'));
+      
+      if (!userInfo || userInfo.role !== 'student') {
+        // Redirect to login if not a student
+        window.location.href = '/student-login';
+        return;
+      }
+      
+      // Display student name
+      const studentNameElement = document.getElementById('student-name');
+      if (studentNameElement) {
+        studentNameElement.textContent = `${userInfo.first_name} ${userInfo.last_name}`;
+      }
+      
+      // Load student's courses
+      loadStudentCourses(userInfo.PRN);
+      
+      // Handle join course form
+      const joinCourseForm = document.getElementById('join-course-form');
+      if (joinCourseForm) {
+        joinCourseForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          const courseCode = document.getElementById('course-code').value;
+          
+          try {
+            const response = await fetch('/api/course/join', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                courseCode,
+                prn: userInfo.PRN
+              })
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+              alert(data.error || 'Failed to join course');
+              return;
+            }
+            
+            alert('Successfully joined the course!');
+            
+            // Reload courses
+            loadStudentCourses(userInfo.PRN);
+            
+            // Clear form
+            joinCourseForm.reset();
+          } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+          }
+        });
+      }
+      
+      // Function to load student's courses
+      async function loadStudentCourses(prn) {
+        try {
+          const response = await fetch(`/api/student/courses/${prn}`);
+          const data = await response.json();
+          
+          if (!response.ok) {
+            console.error('Failed to load courses:', data.error);
+            return;
+          }
+          
+          const coursesContainer = document.getElementById('courses-container');
+          if (!coursesContainer) return;
+          
+          // Clear existing courses
+          coursesContainer.innerHTML = '';
+          
+          if (data.courses.length === 0) {
+            coursesContainer.innerHTML = '<p>You haven\'t joined any courses yet. Use a course code to join one!</p>';
+            return;
+          }
+          
+          // Display courses
+          data.courses.forEach(course => {
+            const courseElement = document.createElement('div');
+            courseElement.className = 'course-card';
+            courseElement.innerHTML = `
+              <h3>${course.course_name}</h3>
+              <p>Course Code: ${course.course_code}</p>
+              <button class="view-course" data-id="${course.course_id}">View Course</button>
+            `;
+            coursesContainer.appendChild(courseElement);
+          });
+          
+          // Add event listeners to view course buttons
+          document.querySelectorAll('.view-course').forEach(button => {
+            button.addEventListener('click', function() {
+              const courseId = this.getAttribute('data-id');
+              // Redirect to course page or show course details
+              // window.location.href = `/student/course/${courseId}`;
+            });
+          });
+        } catch (error) {
+          console.error('Error loading courses:', error);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
