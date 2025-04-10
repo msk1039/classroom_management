@@ -19,11 +19,12 @@ router.post('/teacher/signup', async (req, res) => {
       if (results.length > 0) {
         return res.status(409).json({ error: 'Teacher ID already exists' });
       }
+      const role = "teacher";
       
       // Call the stored procedure with PRN as first parameter
       db.query(
-        'INSERT INTO users (PRN, username, email, password_hash, role, first_name, last_name) VALUES (?, ?, ?, ?, "teacher", ?, ?)', 
-        [prn, username, email, passwordHash, firstName, lastName],
+        'INSERT INTO users (PRN, username, email, password_hash, role, first_name, last_name) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+        [prn, username, email, passwordHash, role, firstName, lastName],
         (err, result) => {
           if (err) {
             if (err.code === 'ER_DUP_ENTRY') {
@@ -62,11 +63,13 @@ router.post('/student/signup', async (req, res) => {
       if (results.length > 0) {
         return res.status(409).json({ error: 'PRN already exists' });
       }
+
+      const role = "student";
       
       // Insert student record
       db.query(
-        'INSERT INTO users (PRN, username, email, password_hash, role, first_name, last_name) VALUES (?, ?, ?, ?, "student", ?, ?)', 
-        [prn, username, email, passwordHash, firstName, lastName],
+        'INSERT INTO users (PRN, username, email, password_hash, role, first_name, last_name) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+        [prn, username, email, passwordHash,role , firstName, lastName],
         (err, result) => {
           if (err) {
             if (err.code === 'ER_DUP_ENTRY') {
@@ -97,15 +100,15 @@ router.post('/login', (req, res) => {
   let query = 'SELECT PRN, username, password_hash, role, first_name, last_name FROM users WHERE ';
   
   if (role === 'teacher') {
-    query += 'email = ? AND role = "teacher"';
+    query += 'email = ? AND role = ?';
   } else {
-    query += 'PRN = ? AND role = "student"';
+    query += 'PRN = ? AND role = ?';
   }
   
   // Get user by username/email or PRN
   db.query(
     query,
-    [username],
+    [username, role],
     async (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
       

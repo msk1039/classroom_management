@@ -1,3 +1,9 @@
-/node_modules
+# Dependencies
+node_modules/
 
-node_modules
+# Certificates
+certs/
+
+# Environment variables
+.env
+.env.*

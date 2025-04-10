@@ -3,6 +3,7 @@ DROP DATABASE classroom_management;
 CREATE DATABASE IF NOT EXISTS classroom_management;
 use classroom_management;
 
+
 CREATE TABLE users (
   PRN VARCHAR(10) PRIMARY KEY,
   username VARCHAR(50) NOT NULL UNIQUE,
@@ -14,7 +15,7 @@ CREATE TABLE users (
   date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. COURSES
+
 CREATE TABLE courses (
   course_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   course_name VARCHAR(255) NOT NULL,
@@ -25,7 +26,8 @@ CREATE TABLE courses (
   FOREIGN KEY (created_by) REFERENCES users(PRN) ON DELETE SET NULL
 );
 
--- 3. COURSE MEMBERS
+
+
 CREATE TABLE course_members (
   course_id INT UNSIGNED,
   PRN VARCHAR(10),
@@ -36,7 +38,8 @@ CREATE TABLE course_members (
   FOREIGN KEY (PRN) REFERENCES users(PRN) ON DELETE CASCADE
 );
 
--- 4. ASSIGNMENTS
+
+
 CREATE TABLE assignments (
   assignment_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   course_id INT UNSIGNED NOT NULL,
@@ -47,7 +50,8 @@ CREATE TABLE assignments (
   FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
 );
 
--- 5. SUBMISSIONS
+
+
 CREATE TABLE submissions (
   submission_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   assignment_id INT UNSIGNED NOT NULL,
@@ -60,7 +64,8 @@ CREATE TABLE submissions (
   FOREIGN KEY (PRN) REFERENCES users(PRN) ON DELETE CASCADE
 );
 
--- 6. GRADES
+
+
 CREATE TABLE grades (
   grade_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   submission_id INT UNSIGNED NOT NULL,
@@ -73,7 +78,8 @@ CREATE TABLE grades (
   FOREIGN KEY (grader_id) REFERENCES users(PRN)
 );
 
--- 7. ANNOUNCEMENTS
+
+
 CREATE TABLE announcements (
   announcement_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   course_id INT UNSIGNED NOT NULL,
@@ -85,7 +91,7 @@ CREATE TABLE announcements (
   FOREIGN KEY (posted_by) REFERENCES users(PRN)
 );
 
--- 8. MATERIALS
+
 CREATE TABLE materials (
   material_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   course_id INT UNSIGNED NOT NULL,
