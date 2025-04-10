@@ -14,6 +14,9 @@ app.use(express.static(path.join(__dirname, '../public'))); // serve static file
 app.use('/api', apiRoutes);
 
 // Serve HTML files
+app.get('/',(req, res)=>{
+  res.sendFile(path.join(__dirname, '../views', 'studentlogin.html'));
+})
 app.get('/student-login',(req, res)=>{
     res.sendFile(path.join(__dirname, '../views', 'studentlogin.html'));
   })
