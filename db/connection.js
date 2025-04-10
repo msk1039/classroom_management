@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
 require('dotenv').config();
-const fs = require('fs');
+// const fs = require('fs');
 
 
 const db = mysql.createConnection({
@@ -10,7 +10,7 @@ const db = mysql.createConnection({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   ssl: {
-    ca: fs.readFileSync('certs/ca.pem'),
+    ca: process.env.DB_CA_CERT,
     // key: fs.readFileSync('./certs/key.pem'),
     // cert: fs.readFileSync('./certs/cert.pem'),
     rejectUnauthorized: true,
