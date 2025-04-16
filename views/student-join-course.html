@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Join Course - EduSync</title>
+    <link rel="stylesheet" href="/css/style2.css" />
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-y: auto;
+            background: linear-gradient(135deg, var(--d), #1b263b);
+            font-family: system-ui, sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border-radius: var(--r);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h2 {
+            font-size: 2rem;
+            color: #40c4ff;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        form input,
+        form button {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        form input {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+        
+        form button {
+            background: linear-gradient(45deg, #40c4ff, #00bcd4);
+            color: white;
+            cursor: pointer;
+        }
+        
+        .success-message {
+            color: #4caf50;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .error-message {
+            color: #e53935;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body class="fade-in">
+    <main class="container">
+        <h2>📚 Join a Course</h2>
+
+        <!-- Course Join Form -->
+        <form id="joinCourseForm">
+            <input type="text" id="courseCode" placeholder="Course Code" required />
+            <button type="submit">Join Course</button>
+        </form>
+
+        <!-- Messages -->
+        <div id="messageContainer"></div>
+    </main>
+
+    <script>
+
+    const student = localStorage.getItem('user') || sessionStorage.getItem('user');
+    const studentData = student ? JSON.parse(student) : null;
+    const prn = studentData ? studentData.PRN : null;    
+
+
+        document.getElementById('joinCourseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+
+
+            const courseCode = document.getElementById('courseCode').value.trim();
+            if (!courseCode) return;
+
+            // Here you would add JavaScript code to handle form submission
+            // For example, sending data to a server using AJAX or fetch API
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = '';
+
+            // Example of handling response from server
+            fetch('/api/course/join', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        courseCode , prn
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const successMessage = document.createElement('div');
+                        successMessage.classList.add('success-message');
+                        successMessage.textContent = 'Course joined successfully!';
+                        messageContainer.appendChild(successMessage);
+                    } else {
+                        const errorMessage = document.createElement('div');
+                        errorMessage.classList.add('error-message');
+                        errorMessage.textContent = 'Failed to join course. Please try again.';
+                        messageContainer.appendChild(errorMessage);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error joining course:', error);
+                    const errorMessage = document.createElement('div');
+                    errorMessage.classList.add('error-message');
+                    errorMessage.textContent = 'An error occurred. Please try again.';
+                    messageContainer.appendChild(errorMessage);
+                });
+
+            this.reset();
+        });
+    </script>
+</body>
+
+</html>

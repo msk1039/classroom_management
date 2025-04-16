@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Progress - EduSync</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style2.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      overflow: auto;
+    }
+
+    h2 {
+      text-align: center;
+      color: #66ff99;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .progress-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      overflow: auto;
+      justify-content: center;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      min-width: 350px;
+      flex: 1 1 350px;
+    }
+
+    .card canvas {
+      max-width: 100%;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 1rem;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.08);
+      color: #66ff99;
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    @media (max-width: 768px) {
+      .progress-section {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .card {
+        width: 100%;
+      }
+
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      td {
+        text-align: left;
+        padding-left: 50%;
+        position: relative;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        color: #66ff99;
+        font-weight: bold;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📊 Student Assignment Progress (By Course)</h2>
+    <div class="progress-section" id="progressSection">
+      <!-- Cards will be injected here -->
+    </div>
+  </div>
+
+  <script>
+    const loggedInTeacher = "Ms. Kapoor";
+
+    const teacherCourses = {
+      "Ms. Sharma": ["Mathematics"],
+      "Ms. Kapoor": ["Physics", "Chemistry"],
+      "Mr. Singh": ["Biology"]
+    };
+
+    const courseProgressData = {
+      "Physics": {
+        completed: 3,
+        incomplete: 1,
+        students: [
+          { name: "Riya", completed: true },
+          { name: "Sneha", completed: true },
+          { name: "Karan", completed: true },
+          { name: "Aryan", completed: false }
+        ]
+      },
+      "Chemistry": {
+        completed: 2,
+        incomplete: 2,
+        students: [
+          { name: "Riya", completed: true },
+          { name: "Dev", completed: true },
+          { name: "Megha", completed: false },
+          { name: "Rohan", completed: false }
+        ]
+      },
+      "Mathematics": {
+        completed: 4,
+        incomplete: 1,
+        students: [
+          { name: "Aarav", completed: true },
+          { name: "Riya", completed: true },
+          { name: "Dev", completed: true },
+          { name: "Megha", completed: true },
+          { name: "Rohan", completed: false }
+        ]
+      }
+    };
+
+    const section = document.getElementById("progressSection");
+
+    const createGradient = (ctx, color1, color2) => {
+      const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+      gradient.addColorStop(0, color1);
+      gradient.addColorStop(1, color2);
+      return gradient;
+    };
+
+    const renderChartsForTeacher = () => {
+      const courses = teacherCourses[loggedInTeacher];
+      courses.forEach((course, index) => {
+        const data = courseProgressData[course];
+        if (!data) return;
+
+        // Create card container
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h3>${course}</h3>
+          <canvas id="chart${index}"></canvas>
+          <table>
+            <thead><tr><th>Student</th><th>Completed</th></tr></thead>
+            <tbody>
+              ${data.students.map(s => `
+                <tr>
+                  <td data-label="Student">${s.name}</td>
+                  <td data-label="Completed">${s.completed ? "✅" : "❌"}</td>
+                </tr>`).join("")}
+            </tbody>
+          </table>
+        `;
+        section.appendChild(card);
+
+        // Draw chart
+        const ctx = document.getElementById(`chart${index}`).getContext("2d");
+        const gradient = createGradient(ctx, "#66ff99", "#00c853");
+
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Completed', 'Incomplete'],
+            datasets: [{
+              data: [data.completed, data.incomplete],
+              backgroundColor: [gradient, '#2e7d32'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom', labels: { color: 'white' } }
+            }
+          }
+        });
+      });
+    };
+
+    renderChartsForTeacher();
+  </script>
+</body>
+</html>

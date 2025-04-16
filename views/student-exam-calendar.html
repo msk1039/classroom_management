@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Exam Calendar - EduSync</title>
+  <link rel="stylesheet" href="style2.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: linear-gradient(135deg, var(--d), #1b263b);
+      font-family: system-ui, sans-serif;
+      color: white;
+      overflow: auto;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 1rem;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    h2 {
+      font-size: 2rem;
+      color: #66ff99;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    th {
+      background-color: rgba(255, 255, 255, 0.07);
+      color: #66ff99;
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      td {
+        text-align: left;
+        padding-left: 50%;
+        position: relative;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        font-weight: bold;
+        color: #66ff99;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="fade-in">
+  <div class="container">
+    <h2>📅 Exam Calendar</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Exam Name</th>
+          <th>Course</th>
+          <th>Exam Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="Exam Name">Midterm Exam</td>
+          <td data-label="Course">Mathematics</td>
+          <td data-label="Exam Date">2025-04-15</td>
+        </tr>
+        <tr>
+          <td data-label="Exam Name">Midterm Exam</td>
+          <td data-label="Course">Physics</td>
+          <td data-label="Exam Date">2025-04-17</td>
+        </tr>
+        <tr>
+          <td data-label="Exam Name">Midterm Exam</td>
+          <td data-label="Course">English</td>
+          <td data-label="Exam Date">2025-04-18</td>
+        </tr>
+        <tr>
+          <td data-label="Exam Name">Midterm Exam</td>
+          <td data-label="Course">History</td>
+          <td data-label="Exam Date">2025-04-19</td>
+        </tr>
+        <tr>
+          <td data-label="Exam Name">Midterm Exam</td>
+          <td data-label="Course">Chemistry</td>
+          <td data-label="Exam Date">2025-04-20</td>
+        </tr>
+        <tr>
+          <td data-label="Exam Name">Midterm Exam</td>
+          <td data-label="Course">Computer Science</td>
+          <td data-label="Exam Date">2025-04-21</td>
+        </tr>
+        <tr>
+          <td data-label="Exam Name">Midterm Exam</td>
+          <td data-label="Course">Biology</td>
+          <td data-label="Exam Date">2025-04-22</td>
+        </tr>
+        <tr>
+          <td data-label="Exam Name">Final Exam</td>
+          <td data-label="Course">Mathematics</td>
+          <td data-label="Exam Date">2025-06-10</td>
+        </tr>
+        <tr>
+          <td data-label="Exam Name">Final Exam</td>
+          <td data-label="Course">Physics</td>
+          <td data-label="Exam Date">2025-06-12</td>
+        </tr>
+        <tr>
+          <td data-label="Exam Name">Final Exam</td>
+          <td data-label="Course">English</td>
+          <td data-label="Exam Date">2025-06-14</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

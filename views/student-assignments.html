@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assignments - EduSync</title>
+  <link rel="stylesheet" href="style2.css" />
+  <style>
+    .container {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      border-radius: var(--r);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    h2 {
+      font-size: 2rem;
+      color: #40c4ff;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.08);
+      color: #40c4ff;
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    input[type="file"] {
+      color: white;
+      cursor: pointer;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      border-radius: 1rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      min-width: 100px;
+      color: #fff;
+    }
+
+    .submitted {
+      background-color: #4caf50;
+    }
+
+    .not-submitted {
+      background-color: #e53935;
+    }
+
+    .btn {
+      background: linear-gradient(45deg, #40c4ff, #00bcd4);
+      border: none;
+      padding: 0.4rem 1rem;
+      color: white;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+      }
+
+      td {
+        text-align: left;
+        padding-left: 50%;
+        position: relative;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        font-weight: bold;
+        color: #40c4ff;
+      }
+    }
+  </style>
+</head>
+<body class="fade-in">
+  <main class="container">
+    <h2>📘 Your Assignments</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Teacher</th>
+          <th>Course</th>
+          <th>Work</th>
+          <th>Remark</th>
+          <th>Upload Work</th>
+          <th>Status</th>
+          <th>Submitted Date</th>
+          <th>Due Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="Teacher">Mr. Sharma</td>
+          <td data-label="Course">Mathematics</td>
+          <td data-label="Work">Homework 1</td>
+          <td data-label="Remark">Important for final exam</td>
+          <td data-label="Upload Work">
+            <input type="file" id="file1" />
+            <button class="btn" id="btn1" onclick="toggleSubmission('file1', 'status1', 'date1', 'btn1')">Submit</button>
+          </td>
+          <td data-label="Status">
+            <span class="status not-submitted" id="status1">Not Submitted</span>
+          </td>
+          <td data-label="Submitted Date" id="date1">--</td>
+          <td data-label="Due Date">2025-04-12</td>
+        </tr>
+        <tr>
+          <td data-label="Teacher">Ms. Kapoor</td>
+          <td data-label="Course">Physics</td>
+          <td data-label="Work">Lab Report</td>
+          <td data-label="Remark">Submit PDF only</td>
+          <td data-label="Upload Work">
+            <input type="file" id="file2" />
+            <button class="btn" id="btn2" onclick="toggleSubmission('file2', 'status2', 'date2', 'btn2')">Submit</button>
+          </td>
+          <td data-label="Status">
+            <span class="status not-submitted" id="status2">Not Submitted</span>
+          </td>
+          <td data-label="Submitted Date" id="date2">--</td>
+          <td data-label="Due Date">2025-04-14</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    function toggleSubmission(fileInputId, statusId, dateId, buttonId) {
+      const fileInput = document.getElementById(fileInputId);
+      const statusEl = document.getElementById(statusId);
+      const dateEl = document.getElementById(dateId);
+      const buttonEl = document.getElementById(buttonId);
+
+      const isSubmitted = statusEl.classList.contains("submitted");
+
+      if (!isSubmitted) {
+        if (fileInput.files.length > 0) {
+          statusEl.textContent = "Submitted";
+          statusEl.classList.remove("not-submitted");
+          statusEl.classList.add("submitted");
+          const today = new Date().toISOString().split("T")[0];
+          dateEl.textContent = today;
+          buttonEl.textContent = "Unsubmit";
+        } else {
+          alert("Please select a file before submitting.");
+        }
+      } else {
+        // Unsubmit logic
+        statusEl.textContent = "Not Submitted";
+        statusEl.classList.remove("submitted");
+        statusEl.classList.add("not-submitted");
+        dateEl.textContent = "--";
+        fileInput.value = ""; // Clear the file input
+        buttonEl.textContent = "Submit";
+      }
+    }
+  </script>
+</body>
+</html>

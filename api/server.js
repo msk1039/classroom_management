@@ -15,7 +15,7 @@ app.use('/api', apiRoutes);
 
 // Serve HTML files
 app.get('/',(req, res)=>{
-  res.sendFile(path.join(__dirname, '../views', 'studentlogin.html'));
+  res.sendFile(path.join(__dirname, '../views', 'login1.html'));
 })
 app.get('/student-login',(req, res)=>{
     res.sendFile(path.join(__dirname, '../views', 'studentlogin.html'));
@@ -24,7 +24,7 @@ app.get('/student-login',(req, res)=>{
       res.sendFile(path.join(__dirname, '../views', 'teacherlogin.html'));
     })
   app.get('/student/dashboard',(req, res)=>{
-      res.sendFile(path.join(__dirname, '../views', 'studentdashboard.html'));
+      res.sendFile(path.join(__dirname, '../views', 'studentdashboard1.html'));
     })
   
   app.get('/teacher/dashboard',(req, res)=>{
@@ -38,7 +38,30 @@ app.get('/student-login',(req, res)=>{
   app.get('/teacher-signup',(req, res)=>{
       res.sendFile(path.join(__dirname, '../views', 'teachersignup.html'));
     })
+  app.get('/student/attendance',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'student-event-attendance-page.html'));
+    })
 
+    app.get('/student/task-manager',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'student-tasks1.html'));
+    })
+    app.get('/student/join-course',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'student-join-course.html'));
+    })
+    app.get('/teacher/announcements',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'teacher-announcements1.html'));
+    })
+    app.get('/student/announcements',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'student-announcements1.html'));
+    })
+    app.get('/teacher/attendance',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'teacher-event-attendance.html'));
+    })
+    app.get('/teacher/event-attendance',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'teacher-event-attendance.html'));
+    })
+
+    
 
 
 

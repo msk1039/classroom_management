@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Schedule Exam - EduSync</title>
+  <link rel="stylesheet" href="style2.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow: auto;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      min-height: 90vh;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #66ff99;
+      margin-bottom: 1.5rem;
+    }
+
+    .toggle-format {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .toggle-format input {
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    form input, form button {
+      padding: 0.8rem 1rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      flex: 1 1 200px;
+    }
+
+    ::placeholder {
+      color: #dddddd;
+      opacity: 0.9;
+    }
+
+    form input[type="date"],
+    form input[type="time"] {
+      cursor: pointer;
+    }
+
+    form button {
+      background: linear-gradient(45deg, #66ff99, #00c853);
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .table-wrapper {
+      flex-grow: 1;
+      overflow-x: auto;
+      border-radius: 1rem;
+    }
+
+    table {
+      width: 100%;
+      min-width: 950px;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.07);
+      color: #66ff99;
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .delete-btn {
+      background-color: #e53935;
+      color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .delete-btn:hover {
+      background-color: #c62828;
+    }
+
+    @media (max-width: 768px) {
+      form input, form button {
+        flex: 1 1 100%;
+      }
+
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+      }
+
+      td {
+        text-align: left;
+        padding-left: 50%;
+        position: relative;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        font-weight: bold;
+        color: #66ff99;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📅 Schedule Exam</h2>
+
+    <!-- Time format toggle -->
+    <div class="toggle-format">
+      <label for="ampmToggle">Display time in AM/PM:</label>
+      <input type="checkbox" id="ampmToggle" />
+    </div>
+
+    <!-- Form -->
+    <form id="examForm">
+      <input type="text" id="examName" placeholder="Enter Exam Name" required />
+      <input type="text" id="courseName" placeholder="Enter Course Name" required />
+      <input type="date" id="examDate" required />
+      <input type="time" id="timeFrom" placeholder="Time From" required />
+      <input type="time" id="timeTo" placeholder="Time To" required />
+      <button type="submit">Add Exam</button>
+    </form>
+
+    <!-- Table -->
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Exam Name</th>
+            <th>Course</th>
+            <th>Date</th>
+            <th>Time From</th>
+            <th>Time To</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="examTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function formatTimeToAMPM(timeStr) {
+      const [hour, minute] = timeStr.split(":");
+      let hours = parseInt(hour);
+      const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12 || 12;
+      return `${hours}:${minute} ${ampm}`;
+    }
+
+    document.getElementById("examForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const examName = document.getElementById("examName").value.trim();
+      const courseName = document.getElementById("courseName").value.trim();
+      const examDate = document.getElementById("examDate").value;
+      const timeFrom = document.getElementById("timeFrom").value;
+      const timeTo = document.getElementById("timeTo").value;
+      const useAMPM = document.getElementById("ampmToggle").checked;
+
+      if (!examName || !courseName || !examDate || !timeFrom || !timeTo) return;
+
+      const timeFromFormatted = useAMPM ? formatTimeToAMPM(timeFrom) : timeFrom;
+      const timeToFormatted = useAMPM ? formatTimeToAMPM(timeTo) : timeTo;
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td data-label="Exam Name">${examName}</td>
+        <td data-label="Course">${courseName}</td>
+        <td data-label="Date">${examDate}</td>
+        <td data-label="Time From">${timeFromFormatted}</td>
+        <td data-label="Time To">${timeToFormatted}</td>
+        <td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+      `;
+
+      document.getElementById("examTableBody").appendChild(row);
+      this.reset();
+    });
+
+    function deleteRow(button) {
+      const row = button.closest("tr");
+      row.remove();
+    }
+  </script>
+</body>
+</html>

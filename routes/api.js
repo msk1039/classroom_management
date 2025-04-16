@@ -192,7 +192,7 @@ router.post('/course/create', (req, res) => {
   router.post('/course/join', (req, res) => {
     try {
       const { courseCode, prn } = req.body;
-      
+      console.log(courseCode, prn);
       // First check if the course code is valid
       db.query(
         'CALL is_course_code_valid(?)',
@@ -298,6 +298,332 @@ router.post('/course/create', (req, res) => {
     
     return code;
   }
+
+
+  // ...existing code...
+
+// TASKS API ENDPOINTS
+
+// Get all tasks for a student
+router.get('/tasks/:prn', (req, res) => {
+  try {
+    const { prn } = req.params;
+    
+    db.query(
+      'CALL fetch_all_tasks(?)',
+      [prn],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        // The stored procedure returns the tasks in the first result set
+        const tasks = result[0];
+        
+        res.status(200).json({
+          success: true,
+          tasks: tasks
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Add a new task
+router.post('/tasks', (req, res) => {
+  try {
+    const { prn, subject, task, dueDate } = req.body;
+    
+    db.query(
+      'INSERT INTO tasks (PRN, subject, task, due_date) VALUES (?, ?, ?, ?)',
+      [prn, subject, task, dueDate],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(201).json({
+          success: true,
+          message: 'Task added successfully',
+          taskId: result.insertId
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update task status
+router.put('/tasks/:taskId', (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const { status } = req.body;
+    
+    db.query(
+      'CALL update_task_status(?, ?)',
+      [taskId, status],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(200).json({
+          success: true,
+          message: 'Task status updated'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete a task
+router.delete('/tasks/:taskId', (req, res) => {
+  try {
+    const { taskId } = req.params;
+    
+    db.query(
+      'CALL delete_task(?)',
+      [taskId],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(200).json({
+          success: true,
+          message: 'Task deleted successfully'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete all tasks for a student
+router.delete('/tasks/clear/:prn', (req, res) => {
+  try {
+    const { prn } = req.params;
+    
+    db.query(
+      'DELETE FROM tasks WHERE PRN = ?',
+      [prn],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(200).json({
+          success: true,
+          message: 'All tasks cleared successfully'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+// ...existing code...
+
+// ANNOUNCEMENTS API ENDPOINTS
+
+// Create a new announcement
+router.post('/announcements', (req, res) => {
+  try {
+    const { courseId, postedBy, title, content } = req.body;
+    
+    db.query(
+      'CALL create_announcment(?, ?, ?, ?)',
+      [courseId, postedBy, title, content],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(201).json({
+          success: true,
+          message: 'Announcement created successfully'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete an announcement
+router.delete('/announcements/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    db.query(
+      'CALL delete_announcment(?)',
+      [id],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(200).json({
+          success: true,
+          message: 'Announcement deleted successfully'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/student/announcements', (req, res) => {
+  try {
+    const { student_id } = req.body;
+    
+    if (!student_id) {
+      return res.status(400).json({ 
+        error: 'Missing student ID' 
+      });
+    }
+    
+    db.query(
+      'CALL fetch_announcments_by_student(?)',
+      [student_id],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        // The stored procedure returns the announcements in the first result set
+        const announcements = result[0];
+        
+        res.status(200).json({
+          success: true,
+          announcements: announcements
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// POST route to create a new attendance request
+router.post('/attendance-request', (req, res) => {
+  try {
+    const { studentName, PRN, proofUrl, requestDate, requestTime } = req.body;
+
+    db.query(
+      'CALL insert_attendance_request(?, ?, ?, ?, ?)',
+      [studentName, PRN, proofUrl, requestDate, requestTime],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        res.status(201).json({
+          success: true,
+          message: 'Attendance request created successfully'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET route to fetch attendance requests for a specific student 
+router.get('/attendance-requests/:PRN', (req, res) => {
+  try {
+    const { PRN } = req.params;
+
+    db.query(
+      'CALL fetch_attendance_by_student(?)',
+      [PRN],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        // The stored procedure returns the requests in the first result set
+        const attendanceRequests = result[0];
+
+        res.status(200).json({
+          success: true,
+          attendanceRequests: attendanceRequests 
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+// GET route to fetch all attendance requests (for teachers)
+router.get('/attendance-requests', (req, res) => {
+  try {
+    db.query(
+      'CALL fetch_all_attendance_requests()',
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        // The stored procedure returns the requests in the first result set
+        const attendanceRequests = result[0];
+
+        res.status(200).json({
+          success: true,
+          attendanceRequests: attendanceRequests 
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PUT route to update attendance request status (approve or reject)
+router.put('/attendance-request/:requestId', (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const { status } = req.body;
+    
+    // Validate the status
+    if (status !== 'approved' && status !== 'rejected' && status !== 'pending') {
+      return res.status(400).json({ error: 'Invalid status value' });
+    }
+    
+    db.query(
+      'CALL update_attendance_status(?, ?)',
+      [requestId, status],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(200).json({
+          success: true,
+          message: `Attendance request ${status}`
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
   
 
 module.exports = router;

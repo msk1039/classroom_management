@@ -133,3 +133,185 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE add_task (
+  IN PRN VARCHAR(10),
+  IN p_subject VARCHAR(255),
+  IN p_task TEXT,
+  IN p_due_date DATE
+)
+BEGIN
+  INSERT INTO tasks (student_id, subject, task, due_date)
+  VALUES (p_student_id, p_subject, p_task, p_due_date);
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE update_task_status (
+  IN p_task_id INT UNSIGNED,
+  IN p_status ENUM('pending', 'in_progress', 'completed')
+)
+BEGIN
+  UPDATE tasks
+  SET status = p_status
+  WHERE task_id = p_task_id;
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE delete_task (
+  IN p_task_id INT UNSIGNED
+)
+BEGIN
+  DELETE FROM tasks
+  WHERE task_id = p_task_id;
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE fetch_all_tasks (
+  IN P_PRN VARCHAR(10)
+)
+BEGIN
+  SELECT * from tasks
+  WHERE PRN = P_PRN;
+END //
+
+DELIMITER ;
+
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE create_announcment (
+  IN p_course_id VARCHAR(255),
+  IN p_posted_by VARCHAR(50),
+  IN p_title VARCHAR(20),
+  IN p_content TEXT
+)
+BEGIN
+
+
+    INSERT INTO announcements (course_id, posted_by, title, content)
+    VALUES (p_course_id, p_posted_by, p_title, p_content);
+
+  
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE delete_announcment (
+  IN p_announcement_id INT UNSIGNED
+)
+BEGIN
+
+
+    DELETE FROM announcements
+    WHERE announcement_id = p_announcement_id;
+
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE fetch_announcments (
+  IN p_course_id INT UNSIGNED
+)
+BEGIN
+  SELECT * FROM announcements
+  WHERE course_id = p_course_id;
+END //
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE fetch_announcments_by_student (
+  IN p_student_id VARCHAR(10)
+) 
+BEGIN
+  SELECT a.*
+  FROM announcements a
+  JOIN courses c ON a.course_id = c.course_id
+  JOIN course_members cm ON c.course_id = cm.course_id
+  WHERE cm.PRN = p_student_id;
+END //
+DELIMITER ;
+
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE insert_attendance_request (
+  IN p_student_name VARCHAR(255),
+  IN p_PRN VARCHAR(10),
+  IN p_proof_url TEXT,
+  IN p_request_date DATE,
+  IN p_request_time TIME
+)
+BEGIN
+  INSERT INTO attendance_request (student_name, PRN, proof_url, request_date, request_time)
+  VALUES (p_student_name, p_PRN, p_proof_url, p_request_date, p_request_time);
+END //
+
+DELIMITER ;
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE update_attendance_status (
+  IN p_request_id INT UNSIGNED,
+  IN p_status ENUM('pending', 'approved', 'rejected')
+)
+BEGIN
+  UPDATE attendance_request
+  SET status = p_status
+  WHERE request_id = p_request_id;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE delete_attendance_request (
+  IN p_request_id INT UNSIGNED
+)
+BEGIN
+  DELETE FROM attendance_request
+  WHERE request_id = p_request_id;
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE fetch_all_attendance_requests ()
+BEGIN
+  SELECT request_id, student_name, PRN, proof_url, 
+         request_date, request_time, status, created_at
+  FROM attendance_request
+  ORDER BY created_at DESC;
+END //
+
+DELIMITER ;

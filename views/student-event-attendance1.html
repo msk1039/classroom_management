@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Attendance - EduSync</title>
+    <link rel="stylesheet" href="/css/style2.css" />
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: linear-gradient(135deg, var(--d), #1b263b);
+            font-family: system-ui, sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .container {
+            max-width: 1100px;
+            height: 100vh;
+            margin: 2rem auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+        }
+        
+        h2 {
+            text-align: center;
+            font-size: 2rem;
+            color: #40c4ff;
+            margin-bottom: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .table-wrapper {
+            overflow: auto;
+            flex-grow: 1;
+            border-radius: 1rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+        
+        th,
+        td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        th {
+            background: rgba(255, 255, 255, 0.07);
+            color: #40c4ff;
+        }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        input[type="file"] {
+            color: white;
+        }
+        
+        .status {
+            padding: 0.4rem 0.8rem;
+            border-radius: 1rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .approved {
+            background-color: #00c853;
+            color: white;
+        }
+        
+        .not-approved {
+            background-color: #e53935;
+            color: white;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #40c4ff, #40c4ff);
+            border: none;
+            padding: 0.4rem 1rem;
+            color: white;
+            border-radius: 1rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            table,
+            thead,
+            tbody,
+            th,
+            td,
+            tr {
+                display: block;
+            }
+            thead tr {
+                display: none;
+            }
+            tr {
+                margin-bottom: 1rem;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.03);
+            }
+            td {
+                text-align: left;
+                padding-left: 50%;
+                position: relative;
+            }
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 1rem;
+                font-weight: bold;
+                color: #66ff99;
+            }
+        }
+        
+         ::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body class="fade-in">
+    <div class="container">
+        <h2>🎉 Event Attendance</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Date</th>
+                        <th>Organizer</th>
+                        <th>Upload Proof</th>
+                        <th>Submit</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Event Name">AI Workshop</td>
+                        <td data-label="Date">2025-04-08</td>
+                        <td data-label="Organizer">Mr. Sinha</td>
+                        <td data-label="Upload Proof"><input type="file" /></td>
+                        <td data-label="Submit"><button class="btn">Submit</button></td>
+                        <td data-label="Status"><span class="status not-approved">Not Approved</span></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Event Name">Cultural Fest</td>
+                        <td data-label="Date">2025-03-25</td>
+                        <td data-label="Organizer">Ms. Desai</td>
+                        <td data-label="Upload Proof"><input type="file" /></td>
+                        <td data-label="Submit"><button class="btn">Submit</button></td>
+                        <td data-label="Status"><span class="status approved">Approved</span></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Event Name">Clean Campus Drive</td>
+                        <td data-label="Date">2025-04-06</td>
+                        <td data-label="Organizer">Mrs. Kapoor</td>
+                        <td data-label="Upload Proof"><input type="file" /></td>
+                        <td data-label="Submit"><button class="btn">Submit</button></td>
+                        <td data-label="Status"><span class="status not-approved">Not Approved</span></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Event Name">Tech Quiz</td>
+                        <td data-label="Date">2025-04-12</td>
+                        <td data-label="Organizer">Mr. Iyer</td>
+                        <td data-label="Upload Proof"><input type="file" /></td>
+                        <td data-label="Submit"><button class="btn">Submit</button></td>
+                        <td data-label="Status"><span class="status not-approved">Not Approved</span></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Event Name">Art Workshop</td>
+                        <td data-label="Date">2025-04-14</td>
+                        <td data-label="Organizer">Ms. Joshi</td>
+                        <td data-label="Upload Proof"><input type="file" /></td>
+                        <td data-label="Submit"><button class="btn">Submit</button></td>
+                        <td data-label="Status"><span class="status approved">Approved</span></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Event Name">Poster Competition</td>
+                        <td data-label="Date">2025-04-16</td>
+                        <td data-label="Organizer">Mr. Ramesh</td>
+                        <td data-label="Upload Proof"><input type="file" /></td>
+                        <td data-label="Submit"><button class="btn">Submit</button></td>
+                        <td data-label="Status"><span class="status not-approved">Not Approved</span></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Event Name">Environment Talk</td>
+                        <td data-label="Date">2025-04-18</td>
+                        <td data-label="Organizer">Ms. Kapoor</td>
+                        <td data-label="Upload Proof"><input type="file" /></td>
+                        <td data-label="Submit"><button class="btn">Submit</button></td>
+                        <td data-label="Status"><span class="status approved">Approved</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

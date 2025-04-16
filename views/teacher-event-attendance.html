@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teacher Event Attendance - EduSync</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f2027, #2c5364);
+            font-family: Arial, sans-serif;
+            color: white;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+        }
+        
+        h2 {
+            text-align: center;
+            color: #66ff99;
+            margin-bottom: 1rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+        
+        th,
+        td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        th {
+            background: rgba(255, 255, 255, 0.1);
+            color: #66ff99;
+        }
+        
+        .status {
+            font-weight: bold;
+            color: #ff5722;
+        }
+        
+        .approved {
+            color: #4caf50;
+        }
+        
+        .rejected {
+            color: #ff0000;
+        }
+        
+        .pending {
+            color: #ffa500;
+        }
+        
+        .btn-approve {
+            background: linear-gradient(45deg, #66ff99, #00c853);
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 1.2rem;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+        
+        .btn-approve:hover {
+            background: linear-gradient(45deg, #00c853, #66ff99);
+        }
+        
+        .btn-reject {
+            background: linear-gradient(45deg, #ff5252, #d32f2f);
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .btn-reject:hover {
+            background: linear-gradient(45deg, #d32f2f, #ff5252);
+        }
+        
+        .action-btns {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>🎓 Event Attendance - Teacher</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>PRN</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Proof</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="teacherTable"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // Initialize attendance data array
+        window.attendanceData = [];
+        
+        // Fetch all attendance requests from the server
+        async function fetchAttendanceRequests() {
+            try {
+                const response = await fetch('/api/attendance-requests');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch attendance requests');
+                }
+                
+                const data = await response.json();
+                if (data.success && data.attendanceRequests) {
+                    window.attendanceData = data.attendanceRequests;
+                    renderTeacherTable();
+                }
+            } catch (error) {
+                console.error('Error fetching attendance requests:', error);
+                alert('Failed to load attendance requests. Please try again later.');
+            }
+        }
+        
+        // Update attendance request status (approve or reject)
+        async function updateAttendanceStatus(requestId, status) {
+            try {
+                const response = await fetch(`/api/attendance-request/${requestId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to ${status} attendance request`);
+                }
+                
+                // Update the local data
+                const index = window.attendanceData.findIndex(request => request.request_id === requestId);
+                if (index !== -1) {
+                    window.attendanceData[index].status = status;
+                    renderTeacherTable();
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error(`Error ${status} attendance request:`, error);
+                throw error;
+            }
+        }
+
+        function renderTeacherTable() {
+            const tableBody = document.getElementById('teacherTable');
+            tableBody.innerHTML = ''; // Clear the table
+
+            if (window.attendanceData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center;">No attendance requests found</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            window.attendanceData.forEach((request) => {
+                // Format the date for display
+                const requestDate = new Date(request.request_date).toLocaleDateString();
+                
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${request.student_name}</td>
+                        <td>${request.PRN}</td>
+                        <td>${requestDate}</td>
+                        <td>${request.request_time}</td>
+                        <td><a href="${request.proof_url}" target="_blank">View Proof</a></td>
+                        <td class="status ${request.status}">
+                            ${request.status}
+                        </td>
+                        <td>
+                            ${renderActionButtons(request)}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        
+        function renderActionButtons(request) {
+            if (request.status === 'pending') {
+                return `
+                    <div class="action-btns">
+                        <button class="btn-approve" onclick="approveRequest(${request.request_id})">
+                            Approve
+                        </button>
+                        <button class="btn-reject" onclick="rejectRequest(${request.request_id})">
+                            Reject
+                        </button>
+                    </div>
+                `;
+            } else if (request.status === 'approved') {
+                return '<span style="color:#4caf50;">✔ Approved</span>';
+            } else if (request.status === 'rejected') {
+                return '<span style="color:#ff0000;">✘ Rejected</span>';
+            }
+        }
+
+        async function approveRequest(requestId) {
+            try {
+                await updateAttendanceStatus(requestId, 'approved');
+                alert('Attendance request approved successfully');
+            } catch (error) {
+                alert('Failed to approve attendance request: ' + error.message);
+            }
+        }
+        
+        async function rejectRequest(requestId) {
+            try {
+                await updateAttendanceStatus(requestId, 'rejected');
+                alert('Attendance request rejected');
+            } catch (error) {
+                alert('Failed to reject attendance request: ' + error.message);
+            }
+        }
+
+        // Load attendance requests when the page loads
+        document.addEventListener('DOMContentLoaded', fetchAttendanceRequests);
+    </script>
+</body>
+
+</html>

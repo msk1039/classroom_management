@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Announcement - EduSync</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    :root {
+      --accent: #66ff99;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --border-glow: rgba(102, 255, 153, 0.3);
+      --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      --border-radius: 1rem;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .form-container {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-glow);
+      border-radius: var(--border-radius);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: var(--box-shadow);
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 1rem 1rem;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(102, 255, 153, 0.2);
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      color: white;
+      outline: none;
+      box-sizing: border-box;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 8px rgba(102, 255, 153, 0.4);
+    }
+
+    .form-group select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2366ff99' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1.2em;
+    }
+
+    .form-group select option {
+      background-color: #203a43;
+      color: white;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-group label {
+      position: absolute;
+      top: -0.7rem;
+      left: 0.8rem;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 0.2rem 0.6rem;
+      border-radius: 0.3rem;
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 500;
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(45deg, #4dc889, var(--accent));
+      color: #0f2027;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(102, 255, 153, 0.2);
+      margin-top: 1rem;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, var(--accent), #4dc889);
+      box-shadow: 0 6px 20px rgba(102, 255, 153, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .alert {
+      padding: 0.75rem;
+      margin-bottom: 1.5rem;
+      border-radius: 0.5rem;
+      color: white;
+      background-color: #f44336;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .alert.success {
+      background-color: #4caf50;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 500px) {
+      .form-container {
+        padding: 1.8rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>📢 Post New Announcement</h2>
+    
+    <div id="alertBox" class="alert" style="display: none;"></div>
+    
+    <form id="announcementForm">
+      <div class="form-group">
+        <select id="courseSelect" required>
+          <option value="" disabled selected></option>
+          <!-- Courses will be loaded dynamically -->
+        </select>
+        <label for="courseSelect">Select Course</label>
+      </div>
+      
+      <div class="form-group">
+        <input type="text" id="announcementTitle" required />
+        <label for="announcementTitle">Announcement Title</label>
+      </div>
+      
+      <div class="form-group">
+        <textarea id="announcementContent" required></textarea>
+        <label for="announcementContent">Announcement Content</label>
+      </div>
+      
+      <button type="submit">Publish Announcement</button>
+    </form>
+  </div>
+
+  <script>
+    // Get teacher PRN from localStorage or sessionStorage
+    const teacher = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+    const teacherId = teacher.PRN;
+    
+    // Show alert message
+    function showAlert(message, isSuccess = false) {
+      const alertBox = document.getElementById('alertBox');
+      alertBox.textContent = message;
+      alertBox.style.display = 'block';
+      alertBox.className = isSuccess ? 'alert success' : 'alert';
+      
+      setTimeout(() => {
+        alertBox.style.display = 'none';
+      }, 3000);
+    }
+    
+    // Fetch teacher courses when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!teacherId) {
+        showAlert('Teacher not logged in. Please log in first.');
+        return;
+      }
+      
+      fetchTeacherCourses();
+    });
+    
+    // Fetch teacher's courses
+    function fetchTeacherCourses() {
+      fetch(`/api/teacher/courses/${teacherId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch courses');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            populateCourseDropdown(data.courses);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showAlert('Failed to load courses: ' + error.message);
+        });
+    }
+    
+    // Populate course dropdown
+    function populateCourseDropdown(courses) {
+      const courseSelect = document.getElementById('courseSelect');
+      
+      // Add placeholder text
+      const placeholderOption = document.createElement('option');
+      placeholderOption.value = "";
+      placeholderOption.textContent = "Select a course";
+      placeholderOption.disabled = true;
+      placeholderOption.selected = true;
+      courseSelect.appendChild(placeholderOption);
+      
+      courses.forEach(course => {
+        const option = document.createElement('option');
+        option.value = course.course_id;
+        option.textContent = course.course_name;
+        courseSelect.appendChild(option);
+      });
+    }
+    
+    // Save announcement
+    document.getElementById('announcementForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      if (!teacherId) {
+        showAlert('Teacher not logged in. Please log in first.');
+        return;
+      }
+      
+      const courseId = document.getElementById('courseSelect').value;
+      const title = document.getElementById('announcementTitle').value.trim();
+      const content = document.getElementById('announcementContent').value.trim();
+      
+      if (!courseId) {
+        showAlert('Please select a course');
+        return;
+      }
+      
+      const announcementData = {
+        courseId,
+        postedBy: teacherId,
+        title,
+        content
+      };
+      
+      fetch('/api/announcements', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(announcementData),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to create announcement');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            showAlert('Announcement published successfully!', true);
+            document.getElementById('announcementForm').reset();
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showAlert('Failed to publish announcement: ' + error.message);
+        });
+    });
+  </script>
+</body>
+</html>

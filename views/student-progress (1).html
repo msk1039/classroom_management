@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Progress Tracker - EduSync</title>
+    <link rel="stylesheet" href="style2.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+            background: linear-gradient(135deg, var(--d), #1b263b);
+            color: white;
+        }
+        
+        .container {
+            min-width: 1000px;
+            min-height: 100vh;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border-radius: var(--r);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 2rem;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            color: #66ff99;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .chart-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 0 12px rgba(102, 255, 153, 0.15);
+            transition: transform 0.3s ease;
+        }
+        
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 24px rgba(102, 255, 153, 0.3);
+        }
+        
+        .course-label {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #66ff99;
+        }
+        
+        .percent-label {
+            position: absolute;
+            top: 58%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            pointer-events: none;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+        }
+        
+        canvas {
+            max-width: 100%;
+            max-height: 220px;
+        }
+        
+        @media (max-width: 768px) {
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="fade-in">
+    <div class="container">
+        <h2>📊 Your Course Progress</h2>
+        <div class="chart-grid" id="chartGrid"></div>
+    </div>
+
+    <script>
+        const courseProgress = {
+            "DBMS": 78,
+            "DBMS Lab": 62,
+            "CNT": 85,
+            "CEP": 55,
+            "COI": 92,
+            "CNT Lab": 48,
+            "Maths": 67,
+            "PDT": 73
+        };
+
+        const chartGrid = document.getElementById("chartGrid");
+
+        const gradients = [
+            ["#a8e063", "#56ab2f"],
+            ["#9be15d", "#00e3ae"],
+            ["#c2e59c", "#64b3f4"],
+            ["#fddb92", "#3bb78f"],
+            ["#e6e9f0", "#a2f0c1"],
+            ["#d4fc79", "#96e6a1"],
+            ["#00b09b", "#96c93d"],
+            ["#43e97b", "#38f9d7"]
+        ];
+
+        let index = 0;
+        for (const [course, progress] of Object.entries(courseProgress)) {
+            const card = document.createElement("div");
+            card.className = "chart-card";
+            card.innerHTML = `
+        <div class="course-label">${course}</div>
+        <canvas id="chart${index}"></canvas>
+        <div class="percent-label">${progress}%</div>
+      `;
+            chartGrid.appendChild(card);
+
+            const canvas = card.querySelector("canvas");
+            const ctx = canvas.getContext("2d");
+
+            // Create unique radial gradient
+            const grad = ctx.createRadialGradient(110, 110, 10, 110, 110, 100);
+            grad.addColorStop(0, gradients[index % gradients.length][0]);
+            grad.addColorStop(1, gradients[index % gradients.length][1]);
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Remaining'],
+                    datasets: [{
+                        data: [progress, 100 - progress],
+                        backgroundColor: [grad, '#1e2a28'],
+                        borderWidth: 2,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                        duration: 1800,
+                        easing: 'easeOutBack'
+                    },
+                    cutout: '75%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: context => `${context.label}: ${context.parsed}%`
+                            }
+                        }
+                    }
+                }
+            });
+
+            index++;
+        }
+    </script>
+</body>
+
+</html>

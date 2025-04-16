@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Announcements - EduSync</title>
+  <link rel="stylesheet" href="style2.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(135deg, var(--d), #1b263b);
+      color: white;
+      overflow: hidden;
+    }
+
+    .container {
+      max-width: 900px;
+      height: 100vh;
+      margin: 2rem auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 2rem;
+      color: #66ff99;
+      margin-bottom: 1rem;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    form input, form textarea, form button {
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 1rem;
+    }
+
+    form input, form textarea {
+      flex: 1 1 280px;
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+    }
+
+    form input[type="date"] {
+      cursor: pointer;
+    }
+
+    form button {
+      background: linear-gradient(45deg, #66ff99, #00c853);
+      color: white;
+      cursor: pointer;
+    }
+
+    .announcements {
+      overflow-y: auto;
+      flex-grow: 1;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 1rem;
+    }
+
+    .announcement-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .announcement-card h4 {
+      margin: 0 0 0.5rem 0;
+      color: #66ff99;
+    }
+
+    .announcement-card p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #e0fce0;
+    }
+
+    .announcement-card .date {
+      font-size: 0.8rem;
+      color: #a8f5c9;
+      margin-top: 0.25rem;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    @media (max-width: 600px) {
+      form input, form textarea, form button {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body class="fade-in">
+  <div class="container">
+    <h2>📢 Teacher Announcements</h2>
+
+    <!-- Announcement Form -->
+    <form id="announcementForm">
+      <input type="text" id="title" placeholder="Announcement Title" required />
+      <textarea id="message" rows="2" placeholder="Write your announcement..." required></textarea>
+      <input type="date" id="annDate" required />
+      <button type="submit">Add</button>
+    </form>
+
+    <!-- Empty Announcements Display -->
+    <div class="announcements" id="announcementsList"></div>
+  </div>
+
+  <script>
+    document.getElementById('announcementForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('title').value.trim();
+      const message = document.getElementById('message').value.trim();
+      const date = document.getElementById('annDate').value;
+
+      if (!title || !message || !date) return;
+
+      const newCard = document.createElement('div');
+      newCard.className = 'announcement-card';
+      newCard.innerHTML = `
+        <h4>${title}</h4>
+        <p>${message}</p>
+        <div class="date">Date: ${date}</div>
+      `;
+
+      document.getElementById('announcementsList').prepend(newCard);
+      this.reset();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Dashboard - EduSync</title>
+  <link rel="stylesheet" href="/css/style2.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, var(--d), #1b263b);
+      color: white;
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #66ff99;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      color: #c2f0d3;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      backdrop-filter: blur(8px);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #66ff99;
+    }
+
+    .card p {
+      font-size: 1rem;
+      color: #c2f0d3;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body class="fade-in">
+  <main>
+    <h1>Welcome, Teacher 👩‍🏫</h1>
+    <p>Your teaching control panel</p>
+
+    <div class="dashboard">
+      <div class="card" onclick="location.href='/teacher/announcements'">
+        <h3>📢 Announcements</h3>
+        <p>Post or manage student announcements</p>
+      </div>
+
+      <div class="card" onclick="location.href='/teacher/attendance'">
+        <h3>📋 Attendance</h3>
+        <p>Record and view student attendance</p>
+      </div>
+
+      <div class="card" onclick="location.href='results.html'">
+        <h3>📝 Student Results</h3>
+        <p>Enter or update student marks</p>
+      </div>
+
+      <div class="card" onclick="location.href='schedule-exam.html'">
+        <h3>📅 Schedule Exam</h3>
+        <p>Set and manage exam dates</p>
+      </div>
+
+      <div class="card" onclick="location.href='check-assignments.html'">
+        <h3>📂 Check Assignments</h3>
+        <p>View submitted assignments</p>
+      </div>
+
+      <div class="card" onclick="location.href='check-event-attendance.html'">
+        <h3>🎉 Check Event Attendance</h3>
+        <p>Verify student participation in events</p>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

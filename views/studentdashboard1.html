@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard - EduSync</title>
+    <link rel="stylesheet" href="/css/style2.css" />
+    <style>
+        .dashboard {
+            max-width: 1000px;
+            margin: 2rem auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+        
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border-radius: var(--r);
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: transform var(--t), box-shadow var(--t);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: #40c4ff;
+        }
+        
+        ul {
+            text-align: left;
+            padding-left: 1rem;
+        }
+        
+        ul li {
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+
+<body class="fade-in">
+    <main>
+        <h1>Welcome, Student 🎓</h1>
+        <p>Your learning dashboard</p>
+
+        <div class="dashboard">
+            <a href="student-assignments.html" class="card-link">
+                <div class="card">
+                    <h3>📘 Assignments</h3>
+                    <ul>
+                        <li>View your assignments</li>
+                        <li>Check due dates</li>
+                    </ul>
+                </div>
+            </a>
+
+            <a href="/student/attendance" class="card-link">
+                <div class="card">
+                    <h3>📅 Event Attendance</h3>
+                    <ul>
+                        <li>Check upcoming events</li>
+                        <li>View attendance history</li>
+                    </ul>
+                </div>
+            </a>
+
+            <a href="student-tasks.html" class="card-link">
+                <div class="card">
+                    <h3>🗂️ Task Manager</h3>
+                    <ul>
+                        <li>Manage your tasks</li>
+                        <li>Track progress</li>
+                    </ul>
+                </div>
+            </a>
+
+            <a href="student-timetable.html" class="card-link">
+                <div class="card">
+                    <h3>📆 Timetable</h3>
+                    <ul>
+                        <li>View your schedule</li>
+                        <li>Plan your week</li>
+                    </ul>
+                </div>
+            </a>
+
+            <a href="/student/announcements" class="card-link">
+                <div class="card">
+                    <h3>📢 Announcements</h3>
+                    <ul>
+                        <li>Latest updates</li>
+                        <li>Important notices</li>
+                    </ul>
+                </div>
+            </a>
+
+            <a href="/student/join-course" class="card-link">
+                <div class="card">
+                    <h3>📚 Join Course</h3>
+                    <ul>
+                        <li>Enroll in new courses</li>
+                        <li>Explore available courses</li>
+                    </ul>
+                </div>
+            </a>
+        </div>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Announcements - EduSync</title>
+  <link rel="stylesheet" href="style2.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--d), #1b263b);
+      color: white;
+      font-family: system-ui, sans-serif;
+    }
+
+    .container {
+      max-width: 900px;
+      height: 100%;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    h2 {
+      font-size: 2rem;
+      color: #66ff99;
+      text-align: center;
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+    }
+
+    .scroll-area {
+      overflow-y: auto;
+      flex-grow: 1;
+      padding-right: 0.5rem;
+    }
+
+    .announcement {
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 4px solid #66ff99;
+      border-radius: 0.5rem;
+      transition: background 0.3s ease;
+    }
+
+    .announcement:hover {
+      background: rgba(102, 255, 153, 0.05);
+    }
+
+    .announcement-date {
+      font-size: 0.9rem;
+      color: #b2ffcc;
+      margin-bottom: 0.3rem;
+    }
+
+    .announcement-teacher {
+      font-size: 0.9rem;
+      color: #ccffdd;
+      margin-bottom: 0.5rem;
+    }
+
+    .announcement-text {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      .announcement-text {
+        font-size: 1rem;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="fade-in">
+  <div class="container">
+    <h2>📢 Announcements</h2>
+    <div class="scroll-area">
+      <div class="announcement">
+        <div class="announcement-date">April 10, 2025</div>
+        <div class="announcement-teacher">By: Mr. Sinha (AI Department)</div>
+        <div class="announcement-text">
+          Guest lecture on Artificial Intelligence will be held in Auditorium 2 at 11:00 AM. Attendance is mandatory.
+        </div>
+      </div>
+
+      <div class="announcement">
+        <div class="announcement-date">April 09, 2025</div>
+        <div class="announcement-teacher">By: Ms. Mehta (Sports Coordinator)</div>
+        <div class="announcement-text">
+          Sports Day registration closes tomorrow. Fill the form via the student portal to participate.
+        </div>
+      </div>
+
+      <div class="announcement">
+        <div class="announcement-date">April 07, 2025</div>
+        <div class="announcement-teacher">By: Mr. Ramesh (Exam Department)</div>
+        <div class="announcement-text">
+          Semester 2 internal assessments will begin from April 15. Timetable will be released soon.
+        </div>
+      </div>
+
+      <div class="announcement">
+        <div class="announcement-date">April 05, 2025</div>
+        <div class="announcement-teacher">By: Mrs. Kapoor (Environment Club)</div>
+        <div class="announcement-text">
+          Campus cleanliness drive this Saturday. Volunteers, please report to the admin block by 8:30 AM.
+        </div>
+      </div>
+
+      <div class="announcement">
+        <div class="announcement-date">April 03, 2025</div>
+        <div class="announcement-teacher">By: Mr. Iyer (Library)</div>
+        <div class="announcement-text">
+          Return all overdue library books before April 12 to avoid late fees.
+        </div>
+      </div>
+
+      <div class="announcement">
+        <div class="announcement-date">April 01, 2025</div>
+        <div class="announcement-teacher">By: Ms. Desai (Cultural Events)</div>
+        <div class="announcement-text">
+          Cultural Fest auditions begin next week. Check the notice board for your slot.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

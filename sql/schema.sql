@@ -104,3 +104,31 @@ CREATE TABLE materials (
   FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
   FOREIGN KEY (uploaded_by) REFERENCES users(PRN)
 );
+
+
+
+
+
+CREATE TABLE tasks (
+  task_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  PRN VARCHAR(10),
+  subject VARCHAR(255) NOT NULL,
+  task TEXT NOT NULL,
+  due_date DATE,
+  status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (PRN) REFERENCES users(PRN) ON DELETE CASCADE
+);
+
+
+CREATE TABLE attendance_request (
+  request_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  student_name VARCHAR(255) NOT NULL,
+  PRN VARCHAR(10) NOT NULL,
+  proof_url TEXT,
+  request_date DATE NOT NULL,
+  request_time TIME NOT NULL,
+  status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (PRN) REFERENCES users(PRN) ON DELETE CASCADE
+);

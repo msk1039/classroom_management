@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Announcements - EduSync</title>
+    <style>
+         :root {
+            --accent: #40c4ff;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --border-glow: rgba(102, 255, 153, 0.2);
+        }
+        
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 900px;
+            height: 90vh;
+            margin: 3vh auto;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border-radius: 1rem;
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(8px);
+        }
+        
+        h2 {
+            font-size: 2rem;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .scroll-area {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-right: 0.5rem;
+        }
+        
+        .announcement {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid var(--accent);
+            border-radius: 0.6rem;
+            transition: background 0.3s ease;
+        }
+        
+        .announcement:hover {
+            background: rgba(102, 255, 153, 0.08);
+        }
+        
+        .announcement-date {
+            font-size: 0.85rem;
+            color: #b2ffcc;
+            margin-bottom: 0.3rem;
+        }
+        
+        .announcement-teacher {
+            font-size: 0.9rem;
+            color: #ccffdd;
+            margin-bottom: 0.5rem;
+        }
+        
+        .announcement-text {
+            font-size: 1.05rem;
+            line-height: 1.5;
+            color: white;
+        }
+
+        .announcement-course {
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+        
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+        
+        .loader::after {
+            content: '';
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 0.6rem;
+        }
+        
+        .no-announcements {
+            text-align: center;
+            color: #cccccc;
+            padding: 2rem;
+            font-style: italic;
+        }
+        
+         ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 600px) {
+            .announcement-text {
+                font-size: 1rem;
+            }
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Add this to your existing CSS in the <style> section */
+
+        .loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100px;
+        }
+
+        .loader::after {
+        content: '';
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255, 255, 255, 0.2);
+        border-top: 4px solid var(--accent);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+        color: #ff6b6b;
+        text-align: center;
+        padding: 1rem;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 0.6rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>📢 Course Announcements</h2>
+        <div class="scroll-area" id="announcementList">
+            <div class="loader"></div>
+        </div>
+    </div>
+
+    <script>
+        function loadAnnouncements() {
+
+
+            const student = localStorage.getItem('user') || sessionStorage.getItem('user');
+    const studentData = student ? JSON.parse(student) : null;
+    const studentId = studentData ? studentData.PRN : null;
+//   const studentId = localStorage.getItem("PRN") || sessionStorage.getItem("PRN");
+  const container = document.getElementById("announcementList");
+  
+  if (!studentId) {
+    container.innerHTML = "<p class='error-message'>Not logged in. Please log in first.</p>";
+    return;
+  }
+  
+  // Show loading indicator
+  container.innerHTML = "<div class='loader'></div>";
+  
+  // Fetch announcements from the server
+  fetch('/api/student/announcements', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ student_id: studentId })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Failed to fetch announcements');
+    }
+    return response.json();
+  })
+  .then(data => {
+    const announcements = data.announcements;
+    
+    if (!announcements || announcements.length === 0) {
+      container.innerHTML = "<p>No announcements for your courses yet.</p>";
+      return;
+    }
+    
+    container.innerHTML = announcements.map(ann => `
+      <div class="announcement">
+        <div class="announcement-date">${formatDate(ann.posted_at)}</div>
+        <div class="announcement-teacher">By: ${ann.posted_by} (${ann.course_id})</div>
+        <div class="announcement-course">Title: ${ann.title}</div>
+        <div class="announcement-text">${ann.content}</div>
+      </div>
+    `).join('');
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    container.innerHTML = `<p class='error-message'>Error loading announcements: ${error.message}</p>`;
+  });
+}
+
+// Helper function to format dates nicely
+function formatDate(dateString) {
+  if (!dateString) return 'Unknown date';
+  const date = new Date(dateString);
+  return date.toLocaleString();
+}
+
+        // Initialize on page load
+        window.onload = function() {
+            loadAnnouncements();
+        };
+    </script>
+</body>
+
+</html>

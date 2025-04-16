@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Task Manager - EduSync</title>
+  <link rel="stylesheet" href="style2.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow-y: auto;
+      background: linear-gradient(135deg, var(--d), #1b263b);
+      font-family: system-ui, sans-serif;
+      color: white;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      border-radius: var(--r);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    h2 {
+      font-size: 2rem;
+      color: #40c4ff;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      justify-content: space-between;
+    }
+
+    form input, form button {
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 1rem;
+    }
+
+    form input {
+      flex: 1 1 180px;
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+    }
+
+    form input[type="date"] {
+      cursor: pointer;
+    }
+
+    form button {
+      background: linear-gradient(45deg, #40c4ff, #00bcd4);
+      color: white;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.08);
+      color: #40c4ff;
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      border-radius: 1rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: white;
+      min-width: 100px;
+    }
+
+    .completed {
+      background-color: #4caf50;
+    }
+
+    .not-completed {
+      background-color: #e53935;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      form input, form button {
+        flex: 1 1 100%;
+      }
+
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+      }
+
+      td {
+        text-align: left;
+        padding-left: 50%;
+        position: relative;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        font-weight: bold;
+        color: #40c4ff;
+      }
+    }
+  </style>
+</head>
+<body class="fade-in">
+  <main class="container">
+    <h2>🗂️ Your Tasks</h2>
+
+    <!-- Task Entry Form -->
+    <form id="taskForm">
+      <input type="text" id="subject" placeholder="Subject" required />
+      <input type="text" id="taskDesc" placeholder="Task" required />
+      <input type="date" id="taskDate" required />
+      <button type="submit">Add Task</button>
+    </form>
+
+    <!-- Task Table -->
+    <table>
+      <thead>
+        <tr>
+          <th>Task No.</th>
+          <th>Subject</th>
+          <th>Task</th>
+          <th>Date</th>
+          <th>Mark</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="taskTableBody">
+        <tr>
+          <td data-label="Task No.">1</td>
+          <td data-label="Subject">Mathematics</td>
+          <td data-label="Task">Revise Algebra - Chapter 5</td>
+          <td data-label="Date">2025-04-08</td>
+          <td data-label="Mark">
+            <input type="checkbox" onchange="updateTaskStatus(this, 'status1')">
+          </td>
+          <td data-label="Status">
+            <span id="status1" class="status-badge not-completed">Not Completed</span>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="Task No.">2</td>
+          <td data-label="Subject">History</td>
+          <td data-label="Task">Complete Project Report</td>
+          <td data-label="Date">2025-04-09</td>
+          <td data-label="Mark">
+            <input type="checkbox" onchange="updateTaskStatus(this, 'status2')">
+          </td>
+          <td data-label="Status">
+            <span id="status2" class="status-badge not-completed">Not Completed</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    let taskCounter = 2;
+
+    function updateTaskStatus(checkbox, statusId) {
+      const statusEl = document.getElementById(statusId);
+      if (checkbox.checked) {
+        statusEl.textContent = "Completed";
+        statusEl.classList.remove("not-completed");
+        statusEl.classList.add("completed");
+      } else {
+        statusEl.textContent = "Not Completed";
+        statusEl.classList.remove("completed");
+        statusEl.classList.add("not-completed");
+      }
+    }
+
+    document.getElementById('taskForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const subject = document.getElementById('subject').value.trim();
+      const taskDesc = document.getElementById('taskDesc').value.trim();
+      const taskDate = document.getElementById('taskDate').value;
+
+      if (!subject || !taskDesc || !taskDate) return;
+
+      taskCounter++;
+      const statusId = `status${taskCounter}`;
+
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td data-label="Task No.">${taskCounter}</td>
+        <td data-label="Subject">${subject}</td>
+        <td data-label="Task">${taskDesc}</td>
+        <td data-label="Date">${taskDate}</td>
+        <td data-label="Mark">
+          <input type="checkbox" onchange="updateTaskStatus(this, '${statusId}')">
+        </td>
+        <td data-label="Status">
+          <span id="${statusId}" class="status-badge not-completed">Not Completed</span>
+        </td>
+      `;
+
+      document.getElementById('taskTableBody').appendChild(newRow);
+      this.reset();
+    });
+  </script>
+</body>
+</html>
