@@ -624,6 +624,286 @@ router.put('/attendance-request/:requestId', (req, res) => {
   }
 });
 
+
+
+
+// Get all lectures
+router.get('/lectures', (req, res) => {
+  try {
+    db.query(
+      'CALL fetch_all_lectures()',
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        // The stored procedure returns the lectures in the first result set
+        const lectures = result[0];
+        
+        res.status(200).json({
+          success: true,
+          lectures: lectures
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Add a new lecture
+router.post('/lectures', (req, res) => {
+  try {
+    const { teacherName,PRN, subject, dayOfWeek, startTime, endTime } = req.body;
+    
+    // Validate input
+    if (!teacherName || !subject || !dayOfWeek || !startTime || !endTime) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+    
+    db.query(
+      'CALL add_lecture(?,?, ?, ?, ?, ?)',
+      [teacherName,PRN, subject, dayOfWeek, startTime, endTime],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(201).json({
+          success: true,
+          message: 'Lecture added successfully'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update a lecture
+router.put('/lectures/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const { teacherName,PRN, subject, dayOfWeek, startTime, endTime } = req.body;
+    
+    // Validate input
+    if (!teacherName || !subject || !dayOfWeek || !startTime || !endTime) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+    
+    db.query(
+      'CALL update_lecture(?, ?, ?, ?, ?, ?, ?)',
+      [id, teacherName,PRN, subject, dayOfWeek, startTime, endTime],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(200).json({
+          success: true,
+          message: 'Lecture updated successfully'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete a lecture
+router.delete('/lectures/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    db.query(
+      'CALL remove_lecture(?)',
+      [id],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(200).json({
+          success: true,
+          message: 'Lecture deleted successfully'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+// ASSIGNMENTS API ENDPOINTS
+
+// Create a new assignment
+router.post('/assignments', (req, res) => {
+  try {
+    const { courseId, title, description, dueDate } = req.body;
+    
+    if (!courseId || !title || !dueDate) {
+      return res.status(400).json({ error: 'Course ID, title, and due date are required' });
+    }
+    
+    db.query(
+      'CALL create_assignment(?, ?, ?, ?)',
+      [courseId, title, description, dueDate],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(201).json({
+          success: true,
+          message: 'Assignment created successfully',
+          assignmentId: result.insertId
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update an existing assignment
+router.put('/assignments/:assignmentId', (req, res) => {
+  try {
+    const { assignmentId } = req.params;
+    const { title, description, dueDate } = req.body;
+    
+    if (!title || !dueDate) {
+      return res.status(400).json({ error: 'Title and due date are required' });
+    }
+    
+    db.query(
+      'CALL update_assignment(?, ?, ?, ?)',
+      [assignmentId, title, description, dueDate],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(200).json({
+          success: true,
+          message: 'Assignment updated successfully'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete an assignment
+router.delete('/assignments/:assignmentId', (req, res) => {
+  try {
+    const { assignmentId } = req.params;
+    
+    db.query(
+      'CALL delete_assignment(?)',
+      [assignmentId],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(200).json({
+          success: true,
+          message: 'Assignment deleted successfully'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get assignments by course
+router.get('/courses/:courseId/assignments', (req, res) => {
+  try {
+    const { courseId } = req.params;
+    
+    db.query(
+      'CALL fetch_course_assignments(?)',
+      [courseId],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        const assignments = result[0];
+        
+        res.status(200).json({
+          success: true,
+          assignments: assignments
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get assignments for a student
+router.get('/students/:studentId/assignments', (req, res) => {
+  try {
+    const { studentId } = req.params;
+    
+    db.query(
+      'CALL fetch_student_assignments(?)',
+      [studentId],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        const assignments = result[0];
+        
+        res.status(200).json({
+          success: true,
+          assignments: assignments
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Submit an assignment
+router.post('/assignments/:assignmentId/submit', (req, res) => {
+  try {
+    const { assignmentId } = req.params;
+    const { studentId, submissionFileUrl, submissionText } = req.body;
+    
+    if (!studentId || (!submissionFileUrl && !submissionText)) {
+      return res.status(400).json({ 
+        error: 'Student ID and either file URL or submission text are required' 
+      });
+    }
+    
+    db.query(
+      'CALL submit_assignment(?, ?, ?, ?)',
+      [assignmentId, studentId, submissionFileUrl, submissionText],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        
+        res.status(201).json({
+          success: true,
+          message: 'Assignment submitted successfully'
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
   
 
 module.exports = router;

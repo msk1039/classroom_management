@@ -1,0 +1,684 @@
+.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Assignments - EduSync</title>
+  <link rel="stylesheet" href="/css/style2.css" />
+  <style>
+    .container {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      border-radius: var(--r);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    h2, h3 {
+      color: #40c4ff;
+      text-align: center;
+      margin-bottom: 1rem;
+      position: sticky;
+      top: 0;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 0.5rem 0;
+      z-index: 10;
+    }
+
+    h2 {
+      font-size: 2rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    thead {
+      position: sticky;
+      top: 4rem;
+      z-index: 5;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    th {
+      background: rgba(0, 0, 0, 0.6);
+      color: #40c4ff;
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    form {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #40c4ff;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      color: white;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      background: linear-gradient(45deg, #40c4ff, #00bcd4);
+      border: none;
+      padding: 0.6rem 1.2rem;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      font-weight: bold;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .btn-delete {
+      background: linear-gradient(45deg, #ff5252, #f44336);
+    }
+
+    .btn-edit {
+      background: linear-gradient(45deg, #ff9800, #f57c00);
+    }
+
+    .notification {
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      text-align: center;
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .success {
+      background-color: rgba(76, 175, 80, 0.2);
+      border: 1px solid #4caf50;
+      color: #4caf50;
+    }
+
+    .error {
+      background-color: rgba(244, 67, 54, 0.2);
+      border: 1px solid #f44336;
+      color: #f44336;
+    }
+
+    .assignments-section {
+      margin-top: 2rem;
+      max-height: 50vh;
+      overflow-y: auto;
+      padding: 0 0.5rem;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .loading {
+      text-align: center;
+      color: #40c4ff;
+      font-style: italic;
+      padding: 2rem;
+    }
+
+    .course-select-container {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+
+      tr {
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+      }
+
+      td {
+        text-align: left;
+        padding-left: 50%;
+        position: relative;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0.75rem;
+        width: 45%;
+        padding-right: 0.5rem;
+        font-weight: bold;
+        color: #40c4ff;
+      }
+    }
+  </style>
+</head>
+<body class="fade-in">
+  <main class="container">
+    <h2>📝 Manage Assignments</h2>
+
+    <!-- Course selector -->
+    <div class="course-select-container">
+      <div class="form-group">
+        <label for="course-select">Select Course:</label>
+        <select id="course-select">
+          <option value="">-- Select a course --</option>
+          <!-- Courses will be loaded here -->
+        </select>
+      </div>
+    </div>
+
+    <!-- Success/Error notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Create Assignment Form -->
+    <h3>Create New Assignment</h3>
+    <form id="create-assignment-form">
+      <div class="form-group">
+        <label for="title">Assignment Title:</label>
+        <input type="text" id="title" name="title" required>
+      </div>
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea id="description" name="description"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="due-date">Due Date:</label>
+        <input type="datetime-local" id="due-date" name="due-date" required>
+      </div>
+      <button type="submit" class="btn">Create Assignment</button>
+    </form>
+
+    <!-- Assignment List -->
+    <h3>Current Assignments</h3>
+    <div class="assignments-section">
+      <table id="assignments-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Due Date</th>
+            <th>Created On</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="5" class="loading">Loading assignments...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Edit Assignment Modal (simplified version) -->
+    <div id="edit-form-container" style="display: none;">
+      <h3>Edit Assignment</h3>
+      <form id="edit-assignment-form">
+        <input type="hidden" id="edit-assignment-id">
+        <div class="form-group">
+          <label for="edit-title">Assignment Title:</label>
+          <input type="text" id="edit-title" name="edit-title" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-description">Description:</label>
+          <textarea id="edit-description" name="edit-description"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="edit-due-date">Due Date:</label>
+          <input type="datetime-local" id="edit-due-date" name="edit-due-date" required>
+        </div>
+        <div class="btn-group">
+          <button type="submit" class="btn">Update Assignment</button>
+          <button type="button" id="cancel-edit" class="btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Improved teacher ID retrieval from multiple sources
+      let teacherId = localStorage.getItem('teacherId') || 
+                     sessionStorage.getItem('teacherId') || 
+                     localStorage.getItem('userId') ||
+                     sessionStorage.getItem('userId');
+      
+      // If no teacherId is found but we have user data, parse it
+      if (!teacherId) {
+        const userData = localStorage.getItem('userData') || sessionStorage.getItem('userData');
+        if (userData) {
+          try {
+            const parsedData = JSON.parse(userData);
+            teacherId = parsedData.PRN || parsedData.userId || parsedData.id;
+          } catch(e) {
+            console.error('Failed to parse user data:', e);
+          }
+        }
+      }
+      
+      // If still no teacherId, check URL parameters (in case passed via query string)
+      if (!teacherId) {
+        const urlParams = new URLSearchParams(window.location.search);
+        teacherId = urlParams.get('teacherId') || urlParams.get('id');
+      }
+      
+      // For development/testing purposes only - remove in production
+      if (!teacherId) {
+        teacherId = prompt("Please enter your teacher ID for testing:");
+        if (teacherId) {
+          localStorage.setItem('teacherId', teacherId);
+        }
+      }
+      
+      if (!teacherId) {
+        showNotification('Please log in as a teacher first', 'error');
+        setTimeout(() => {
+          window.location.href = '/login.html?redirect=teacher-assignments';
+        }, 2000);
+        return;
+      }
+      
+      // Load teacher's courses
+      loadTeacherCourses(teacherId);
+      
+      // Event listeners
+      document.getElementById('course-select').addEventListener('change', loadAssignments);
+      document.getElementById('create-assignment-form').addEventListener('submit', createAssignment);
+      document.getElementById('edit-assignment-form').addEventListener('submit', updateAssignment);
+      document.getElementById('cancel-edit').addEventListener('click', cancelEdit);
+    });
+    
+    // Load teacher's courses
+    function loadTeacherCourses(teacherId) {
+      showNotification('Loading your courses...', 'info');
+      
+      fetch(`/api/teacher/courses/${teacherId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Server returned status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            const courseSelect = document.getElementById('course-select');
+            // Clear existing options except the first one
+            while (courseSelect.options.length > 1) {
+              courseSelect.remove(1);
+            }
+            
+            if (data.courses && data.courses.length > 0) {
+              data.courses.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.course_id;
+                option.textContent = course.course_name;
+                courseSelect.appendChild(option);
+              });
+              
+              // Select the first course and load its assignments
+              if (data.courses.length > 0) {
+                courseSelect.selectedIndex = 1;
+                loadAssignments();
+              }
+              
+              showNotification(`${data.courses.length} courses loaded successfully`, 'success');
+            } else {
+              showNotification('No courses found. Create a course first!', 'info');
+            }
+          } else {
+            showNotification(data.error || 'Failed to load courses', 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error loading courses:', error);
+          showNotification('Error loading courses: ' + error.message, 'error');
+        });
+    }
+    
+    // Load assignments for selected course
+    function loadAssignments() {
+      const courseId = document.getElementById('course-select').value;
+      if (!courseId) {
+        document.querySelector('#assignments-table tbody').innerHTML = 
+          `<tr><td colspan="5" style="text-align: center;">Please select a course first</td></tr>`;
+        return;
+      }
+      
+      document.querySelector('#assignments-table tbody').innerHTML = 
+        `<tr><td colspan="5" class="loading">Loading assignments...</td></tr>`;
+      
+      fetch(`/api/courses/${courseId}/assignments`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Server returned status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            const tableBody = document.querySelector('#assignments-table tbody');
+            tableBody.innerHTML = '';
+            
+            if (data.assignments && data.assignments.length > 0) {
+              data.assignments.forEach(assignment => {
+                const tr = document.createElement('tr');
+                
+                // Format dates
+                const dueDate = new Date(assignment.due_date).toLocaleString();
+                const createdAt = new Date(assignment.created_at).toLocaleString();
+                
+                // Safe text handling - prevent XSS
+                const title = escapeHTML(assignment.title);
+                const description = escapeHTML(assignment.description || 'N/A');
+                
+                tr.innerHTML = `
+                  <td data-label="Title">${title}</td>
+                  <td data-label="Description">${description}</td>
+                  <td data-label="Due Date">${dueDate}</td>
+                  <td data-label="Created On">${createdAt}</td>
+                  <td data-label="Actions">
+                    <div class="btn-group">
+                      <button class="btn btn-edit" onclick="editAssignment(${assignment.assignment_id})">Edit</button>
+                      <button class="btn btn-delete" onclick="deleteAssignment(${assignment.assignment_id})">Delete</button>
+                    </div>
+                  </td>
+                `;
+                
+                tableBody.appendChild(tr);
+              });
+            } else {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `<td colspan="5" style="text-align: center;">No assignments found for this course</td>`;
+              tableBody.appendChild(tr);
+            }
+          } else {
+            showNotification(data.error || 'Failed to load assignments', 'error');
+            document.querySelector('#assignments-table tbody').innerHTML = 
+              `<tr><td colspan="5" style="text-align: center;">Failed to load assignments</td></tr>`;
+          }
+        })
+        .catch(error => {
+          console.error('Error loading assignments:', error);
+          showNotification('Error loading assignments: ' + error.message, 'error');
+          document.querySelector('#assignments-table tbody').innerHTML = 
+            `<tr><td colspan="5" style="text-align: center;">Error: ${error.message}</td></tr>`;
+        });
+    }
+    
+    // Create a new assignment
+    function createAssignment(event) {
+      event.preventDefault();
+      
+      const courseId = document.getElementById('course-select').value;
+      if (!courseId) {
+        showNotification('Please select a course first', 'error');
+        return;
+      }
+      
+      const title = document.getElementById('title').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const dueDate = document.getElementById('due-date').value;
+      
+      if (!title) {
+        showNotification('Assignment title cannot be empty', 'error');
+        return;
+      }
+      
+      if (!dueDate) {
+        showNotification('Due date is required', 'error');
+        return;
+      }
+      
+      showNotification('Creating assignment...', 'info');
+      
+      fetch('/api/assignments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          courseId,
+          title,
+          description,
+          dueDate
+        }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Server returned status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            showNotification('Assignment created successfully', 'success');
+            document.getElementById('create-assignment-form').reset();
+            loadAssignments();
+          } else {
+            showNotification(data.error || 'Failed to create assignment', 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error creating assignment:', error);
+          showNotification('Error creating assignment: ' + error.message, 'error');
+        });
+    }
+    
+    // Edit assignment - Populate the edit form
+    function editAssignment(assignmentId) {
+      try {
+        // Find the assignment data from the table
+        const row = document.querySelector(`#assignments-table tbody tr td button[onclick="editAssignment(${assignmentId})"]`).parentNode.parentNode.parentNode;
+        const title = row.querySelector('td[data-label="Title"]').textContent;
+        const description = row.querySelector('td[data-label="Description"]').textContent === 'N/A' ? '' : row.querySelector('td[data-label="Description"]').textContent;
+        const dueDate = row.querySelector('td[data-label="Due Date"]').textContent;
+        
+        // Convert date string to datetime-local format
+        const dueDateObj = new Date(dueDate);
+        
+        // Format date for datetime-local input (YYYY-MM-DDThh:mm)
+        let formattedDueDate;
+        try {
+          formattedDueDate = dueDateObj.toISOString().slice(0, 16);
+        } catch (e) {
+          console.error('Date parsing error:', e);
+          // Fallback to current date
+          formattedDueDate = new Date().toISOString().slice(0, 16);
+        }
+        
+        // Populate form fields
+        document.getElementById('edit-assignment-id').value = assignmentId;
+        document.getElementById('edit-title').value = title;
+        document.getElementById('edit-description').value = description;
+        document.getElementById('edit-due-date').value = formattedDueDate;
+        
+        // Show edit form
+        document.getElementById('edit-form-container').style.display = 'block';
+        document.getElementById('create-assignment-form').style.display = 'none';
+        
+        // Scroll to edit form
+        document.getElementById('edit-form-container').scrollIntoView({ behavior: 'smooth' });
+      } catch (error) {
+        console.error('Error in edit assignment:', error);
+        showNotification('Error preparing edit form: ' + error.message, 'error');
+      }
+    }
+    
+    // Update an assignment
+    function updateAssignment(event) {
+      event.preventDefault();
+      
+      const assignmentId = document.getElementById('edit-assignment-id').value;
+      const title = document.getElementById('edit-title').value.trim();
+      const description = document.getElementById('edit-description').value.trim();
+      const dueDate = document.getElementById('edit-due-date').value;
+      
+      if (!title) {
+        showNotification('Assignment title cannot be empty', 'error');
+        return;
+      }
+      
+      if (!dueDate) {
+        showNotification('Due date is required', 'error');
+        return;
+      }
+      
+      showNotification('Updating assignment...', 'info');
+      
+      fetch(`/api/assignments/${assignmentId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          dueDate
+        }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Server returned status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            showNotification('Assignment updated successfully', 'success');
+            cancelEdit();
+            loadAssignments();
+          } else {
+            showNotification(data.error || 'Failed to update assignment', 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error updating assignment:', error);
+          showNotification('Error updating assignment: ' + error.message, 'error');
+        });
+    }
+    
+    // Delete an assignment
+    function deleteAssignment(assignmentId) {
+      if (confirm('Are you sure you want to delete this assignment? This action cannot be undone.')) {
+        showNotification('Deleting assignment...', 'info');
+        
+        fetch(`/api/assignments/${assignmentId}`, {
+          method: 'DELETE',
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Server returned status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (data.success) {
+              showNotification('Assignment deleted successfully', 'success');
+              loadAssignments();
+            } else {
+              showNotification(data.error || 'Failed to delete assignment', 'error');
+            }
+          })
+          .catch(error => {
+            console.error('Error deleting assignment:', error);
+            showNotification('Error deleting assignment: ' + error.message, 'error');
+          });
+      }
+    }
+    
+    // Cancel editing and show create form again
+    function cancelEdit() {
+      document.getElementById('edit-form-container').style.display = 'none';
+      document.getElementById('create-assignment-form').style.display = 'block';
+      document.getElementById('edit-assignment-form').reset();
+    }
+    
+    // Show notification
+    function showNotification(message, type) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = `notification ${type || 'info'}`;
+      notification.style.display = 'block';
+      
+      // Auto-hide after 5 seconds (except for errors)
+      if (type !== 'error') {
+        setTimeout(() => {
+          notification.style.display = 'none';
+        }, 5000);
+      }
+    }
+    
+    // Helper function to prevent XSS attacks
+    function escapeHTML(str) {
+      if (!str) return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>

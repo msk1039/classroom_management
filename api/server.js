@@ -60,6 +60,22 @@ app.get('/student-login',(req, res)=>{
     app.get('/teacher/event-attendance',(req, res)=>{
       res.sendFile(path.join(__dirname, '../views', 'teacher-event-attendance.html'));
     })
+    app.get('/teacher/time-table',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'teacher-timetable.html'));
+    })
+    app.get('/student/time-table',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'student-timetable.html'));
+    })
+    app.get('/teacher/time-table/lecture-form',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'lecture-form.html'));
+    })
+    app.get('/student/assignments',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'student-assignments.html'));
+    })
+    app.get('/teacher/assignments',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'teacher-assignments.html'));
+    })
+    
 
     
 

@@ -315,3 +315,163 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+-- Add a new lecture
+DELIMITER //
+CREATE PROCEDURE add_lecture(
+    IN p_teacher_name VARCHAR(100),
+    IN p_PRN VARCHAR(10),
+    IN p_subject VARCHAR(100),
+    IN p_day_of_week VARCHAR(20),
+    IN p_start_time TIME,
+    IN p_end_time TIME
+)
+BEGIN
+    INSERT INTO lecture (teacher_name, PRN, subject, day_of_week, start_time, end_time)
+    VALUES (p_teacher_name,p_PRN, p_subject, p_day_of_week, p_start_time, p_end_time);
+END //
+DELIMITER ;
+
+-- Remove a lecture
+DELIMITER //
+CREATE PROCEDURE remove_lecture(
+    IN p_lecture_id INT
+)
+BEGIN
+    DELETE FROM lecture WHERE id = p_lecture_id;
+END //
+DELIMITER ;
+
+-- Update a lecture
+DELIMITER //
+CREATE PROCEDURE update_lecture(
+    IN p_lecture_id INT,
+    IN p_teacher_name VARCHAR(100),
+    IN p_PRN VARCHAR(10),
+    IN p_subject VARCHAR(100),
+    IN p_day_of_week VARCHAR(20),
+    IN p_start_time TIME,
+    IN p_end_time TIME
+)
+BEGIN
+    UPDATE lecture
+    SET teacher_name = p_teacher_name,
+        PRN = p_PRN,
+        subject = p_subject,
+        day_of_week = p_day_of_week,
+        start_time = p_start_time,
+        end_time = p_end_time
+    WHERE id = p_lecture_id;
+END //
+DELIMITER ;
+
+-- Fetch all lectures
+DELIMITER //
+CREATE PROCEDURE fetch_all_lectures()
+BEGIN
+    SELECT * FROM lecture ORDER BY FIELD(day_of_week, 
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'), start_time;
+END //
+DELIMITER ;
+
+
+
+
+
+-- Create a new assignment
+DELIMITER //
+CREATE PROCEDURE create_assignment(
+    IN p_course_id INT UNSIGNED,
+    IN p_title VARCHAR(255),
+    IN p_description TEXT,
+    IN p_due_date DATETIME
+)
+BEGIN
+    INSERT INTO assignments (course_id, title, description, due_date)
+    VALUES (p_course_id, p_title, p_description, p_due_date);
+END //
+DELIMITER ;
+
+-- Update an existing assignment
+DELIMITER //
+CREATE PROCEDURE update_assignment(
+    IN p_assignment_id INT UNSIGNED,
+    IN p_title VARCHAR(255),
+    IN p_description TEXT,
+    IN p_due_date DATETIME
+)
+BEGIN
+    UPDATE assignments
+    SET title = p_title,
+        description = p_description,
+        due_date = p_due_date
+    WHERE assignment_id = p_assignment_id;
+END //
+DELIMITER ;
+
+-- Delete an assignment
+DELIMITER //
+CREATE PROCEDURE delete_assignment(
+    IN p_assignment_id INT UNSIGNED
+)
+BEGIN
+    DELETE FROM assignments 
+    WHERE assignment_id = p_assignment_id;
+END //
+DELIMITER ;
+
+-- Fetch assignments by course
+DELIMITER //
+CREATE PROCEDURE fetch_course_assignments(
+    IN p_course_id INT UNSIGNED
+)
+BEGIN
+    SELECT * FROM assignments
+    WHERE course_id = p_course_id
+    ORDER BY due_date ASC;
+END //
+DELIMITER ;
+
+-- Fetch assignments for a student
+DELIMITER //
+CREATE PROCEDURE fetch_student_assignments(
+    IN p_student_id VARCHAR(10)
+)
+BEGIN
+    SELECT a.*, c.course_name, s.submission_id, s.submitted_at
+    FROM assignments a
+    JOIN courses c ON a.course_id = c.course_id
+    JOIN course_members cm ON c.course_id = cm.course_id
+    LEFT JOIN submissions s ON a.assignment_id = s.assignment_id AND s.PRN = p_student_id
+    WHERE cm.PRN = p_student_id
+    ORDER BY a.due_date ASC;
+END //
+DELIMITER ;
+
+-- Submit an assignment
+DELIMITER //
+CREATE PROCEDURE submit_assignment(
+    IN p_assignment_id INT UNSIGNED,
+    IN p_student_id VARCHAR(10),
+    IN p_submission_file_url TEXT,
+    IN p_submission_text TEXT
+)
+BEGIN
+    INSERT INTO submissions (assignment_id, PRN, submission_file_url, submission_text)
+    VALUES (p_assignment_id, p_student_id, p_submission_file_url, p_submission_text)
+    ON DUPLICATE KEY UPDATE 
+        submission_file_url = p_submission_file_url,
+        submission_text = p_submission_text,
+        submitted_at = CURRENT_TIMESTAMP;
+END //
+DELIMITER ;

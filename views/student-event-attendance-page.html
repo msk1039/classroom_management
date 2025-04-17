@@ -97,10 +97,22 @@
 </head>
 <body>
   <div class="container">
+    <div style="display: flex; width: 200px ; height: 20px;">
+      <a href="/student/dashboard" style="height: 20px; width: 200px; padding: 0.5rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      display:block;
+      text-decoration: none;
+      "> Back to dashboard</a>
+    </div>
     <h2>🎉 Event Attendance - Student</h2>
+    
     <div class="form-container">
-      <input type="text" id="studentName" placeholder="Student Name" required />
-      <input type="text" id="studentPRN" placeholder="PRN" required />
+      <!-- <input type="text" id="studentName" placeholder="Student Name" required />
+      <input type="text" id="studentPRN" placeholder="PRN" required /> -->
       <input type="date" id="requestDate" required />
       <input type="time" id="requestTime" required />
       <input type="text" id="proofUrl" placeholder="Proof URL/Link" required />
@@ -122,12 +134,20 @@
   </div>
 
   <script>
+    const student = localStorage.getItem('user') || sessionStorage.getItem('user');
+    const studentData = student ? JSON.parse(student) : null;
+    const PRNlocal = studentData ? studentData.PRN : null;
+    const studentNamelocal = studentData ? studentData.first_name : null;
+
+    console.log('Student Data:', studentData); // Debugging line
+    console.log('Student prn:', PRNlocal); // Debugging line
     // Initialize data if not exists
     if (!window.attendanceData) {
       window.attendanceData = [];
     }
     
     async function submitAttendanceRequest(requestData) {
+      console.log('Submitting attendance request:', requestData); // Debugging line
       try {
         const response = await fetch('/api/attendance-request', {
           method: 'POST',
@@ -149,24 +169,31 @@
     }
 
     function renderStudentTable() {
-      const tableBody = document.getElementById('attendanceTable');
-      tableBody.innerHTML = ''; // Clear the table
-
-      window.attendanceData.forEach((request) => {
-        tableBody.innerHTML += `
-          <tr>
-            <td>${request.student_name || request.studentName}</td>
-            <td>${request.PRN}</td>
-            <td>${request.request_date || request.requestDate}</td>
-            <td>${request.request_time || request.requestTime}</td>
-            <td><a href="${request.proof_url || request.proofUrl}" target="_blank">View Proof</a></td>
-            <td class="status ${request.status}">
-              ${request.status}
-            </td>
-          </tr>
-        `;
-      });
-    }
+  const tableBody = document.getElementById('attendanceTable');
+  tableBody.innerHTML = ''; // Clear the table
+  console.log('Rendering attendance data:', window.attendanceData); // Debugging line
+  
+  // Check if attendanceData exists and has the proper structure
+  if (!window.attendanceData || !window.attendanceData.attendanceRequests || window.attendanceData.attendanceRequests.length === 0) {
+    tableBody.innerHTML = '<tr><td colspan="6">No attendance requests found.</td></tr>';
+    return;
+  }
+  
+  window.attendanceData.attendanceRequests.forEach((request) => {
+    tableBody.innerHTML += `
+      <tr>
+        <td>${request.student_name || request.studentName}</td>
+        <td>${request.PRN}</td>
+        <td>${request.request_date || request.requestDate}</td>
+        <td>${request.request_time || request.requestTime}</td>
+        <td><a href="${request.proof_url || request.proofUrl}" target="_blank">View Proof</a></td>
+        <td class="status ${request.status}">
+          ${request.status}
+        </td>
+      </tr>
+    `;
+  });
+}
 
     // Load attendance requests on page load
     async function loadAttendanceRequests() {
@@ -189,48 +216,59 @@
     }
 
     document.getElementById('submitEventButton').addEventListener('click', async function () {
-      const studentName = document.getElementById('studentName').value;
-      const PRN = document.getElementById('studentPRN').value;
-      const requestDate = document.getElementById('requestDate').value;
-      const requestTime = document.getElementById('requestTime').value;
-      const proofUrl = document.getElementById('proofUrl').value;
+  const studentName = studentNamelocal;
+  const PRN = PRNlocal;
+  const requestDate = document.getElementById('requestDate').value;
+  const requestTime = document.getElementById('requestTime').value;
+  const proofUrl = document.getElementById('proofUrl').value;
 
-      if (studentName && PRN && requestDate && requestTime && proofUrl) {
-        try {
-          // Create the request object
-          const newRequest = {
-            studentName,
-            PRN,
-            proofUrl,
-            requestDate,
-            requestTime
-          };
-
-          // Submit the request to the server
-          await submitAttendanceRequest(newRequest);
-          
-          // Add to local data and update UI
-          newRequest.status = 'pending';
-          window.attendanceData.push(newRequest);
-          renderStudentTable();
-          
-          // Clear form
-          document.getElementById('studentName').value = '';
-          document.getElementById('requestDate').value = '';
-          document.getElementById('requestTime').value = '';
-          document.getElementById('proofUrl').value = '';
-        } catch (error) {
-          alert('Failed to submit attendance request: ' + error.message);
-        }
-      } else {
-        alert('Please fill in all the fields.');
+  if (studentName && PRN && requestDate && requestTime && proofUrl) {
+    try {
+      // Create the request object
+      const newRequest = {
+        studentName,
+        PRN,
+        proofUrl,
+        requestDate,
+        requestTime
+      };
+      
+      console.log('New request object:', newRequest); // Debugging line
+      // Submit the request to the server
+      await submitAttendanceRequest(newRequest);
+      
+      // Add to local data and update UI
+      newRequest.status = 'pending';
+      
+      // Initialize attendanceRequests if it doesn't exist
+      if (!window.attendanceData) {
+        window.attendanceData = { attendanceRequests: [] };
       }
-    });
-
+      if (!window.attendanceData.attendanceRequests) {
+        window.attendanceData.attendanceRequests = [];
+      }
+      
+      window.attendanceData.attendanceRequests.push(newRequest);
+      renderStudentTable();
+      
+      // Clear form - only clear fields that actually exist
+      document.getElementById('requestDate').value = '';
+      document.getElementById('requestTime').value = '';
+      document.getElementById('proofUrl').value = '';
+      
+      alert('Attendance request submitted successfully!');
+    } catch (error) {
+      alert('Failed to submit attendance request: ' + error.message);
+    }
+  } else {
+    alert('Please fill in all the fields.');
+  }
+});
     // Load current user's requests when PRN is entered
-    document.getElementById('studentPRN').addEventListener('blur', loadAttendanceRequests);
+    // document.getElementById('studentPRN').addEventListener('blur', loadAttendanceRequests);
     
     // Initialize the table
+    loadAttendanceRequests();
     renderStudentTable();
   </script>
 </body>

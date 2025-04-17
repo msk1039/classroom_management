@@ -132,3 +132,13 @@ CREATE TABLE attendance_request (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (PRN) REFERENCES users(PRN) ON DELETE CASCADE
 );
+
+
+CREATE TABLE lecture (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  teacher_name VARCHAR(100) NOT NULL,
+  subject VARCHAR(100) NOT NULL,
+  day_of_week ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday') NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL
+);

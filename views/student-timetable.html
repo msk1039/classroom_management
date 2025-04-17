@@ -1,182 +1,300 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Timetable - EduSync</title>
-  <link rel="stylesheet" href="style2.css" />
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, var(--d), #1b263b);
-      color: white;
-      font-family: system-ui, sans-serif;
-      height: 100%;
-      overflow: hidden;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable - EduSync</title>
+    <link rel="stylesheet" href="/css/style2.css" />
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--d), #1b263b);
+            color: white;
+            font-family: system-ui, sans-serif;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            margin: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+        }
+        
+        h2 {
+            text-align: center;
+            font-size: 2rem;
+            color: #40c4ff;
+            margin-bottom: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .table-wrapper {
+            overflow: auto;
+            flex-grow: 1;
+            border-radius: 1rem;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 900px;
+        }
+        
+        th,
+        td {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        th {
+            background-color: rgba(255, 255, 255, 0.07);
+            color: #40c4ff;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        
+        td {
+            background-color: rgba(255, 255, 255, 0.03);
+            min-width: 150px;
+        }
+        
+        td:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+        
+        .cell-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #ffffff;
+        }
+        
+        .cell-subtitle {
+            font-size: 0.85rem;
+            color: #b2ffcc;
+        }
 
-    .container {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 1rem;
-      margin: 2rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(8px);
-    }
+        .toolbar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
 
-    h2 {
-      text-align: center;
-      font-size: 2rem;
-      color: #66ff99;
-      margin-bottom: 1rem;
-      flex-shrink: 0;
-    }
+        .add-btn {
+            background: #40c4ff;
+            color: #1b263b;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
 
-    .table-wrapper {
-      overflow: auto;
-      flex-grow: 1;
-      border-radius: 1rem;
-    }
+        .add-btn:hover {
+            background: #80d8ff;
+            transform: translateY(-2px);
+        }
+        
+        .empty-cell {
+            color: rgba(255, 255, 255, 0.3);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.85rem;
+            }
+            th,
+            td {
+                padding: 0.6rem;
+            }
+        }
+        
+         ::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
 
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      min-width: 900px;
-    }
-
-    th, td {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 1rem;
-      text-align: center;
-      vertical-align: middle;
-    }
-
-    th {
-      background-color: rgba(255, 255, 255, 0.07);
-      color: #66ff99;
-      font-weight: bold;
-      white-space: nowrap;
-    }
-
-    td {
-      background-color: rgba(255, 255, 255, 0.03);
-      min-width: 150px;
-    }
-
-    td:hover {
-      background-color: rgba(255, 255, 255, 0.08);
-    }
-
-    .cell-title {
-      font-weight: 600;
-      font-size: 1rem;
-      color: #ffffff;
-    }
-
-    .cell-subtitle {
-      font-size: 0.85rem;
-      color: #b2ffcc;
-    }
-
-    @media (max-width: 768px) {
-      table {
-        font-size: 0.85rem;
-      }
-
-      th, td {
-        padding: 0.6rem;
-      }
-    }
-
-    ::-webkit-scrollbar {
-      height: 8px;
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background-color: rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-    }
-  </style>
+        .loading {
+            text-align: center;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 2rem 0;
+        }
+    </style>
 </head>
+
 <body class="fade-in">
-  <div class="container">
-    <h2>📅 Weekly Timetable</h2>
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Day / Time</th>
-            <th>09:00 - 10:00</th>
-            <th>10:00 - 11:00</th>
-            <th>11:00 - 12:00</th>
-            <th>12:00 - 01:00</th>
-            <th>02:00 - 03:00</th>
-            <th>03:00 - 04:00</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th>Monday</th>
-            <td><div class="cell-title">Mathematics</div><div class="cell-subtitle">Mr. Sharma</div></td>
-            <td><div class="cell-title">English</div><div class="cell-subtitle">Ms. Das</div></td>
-            <td><div class="cell-title">Physics</div><div class="cell-subtitle">Ms. Kapoor</div></td>
-            <td></td>
-            <td><div class="cell-title">Chemistry</div><div class="cell-subtitle">Mr. Ramesh</div></td>
-            <td></td>
-          </tr>
-          <tr>
-            <th>Tuesday</th>
-            <td></td>
-            <td><div class="cell-title">Computer Science</div><div class="cell-subtitle">Mr. Iyer</div></td>
-            <td><div class="cell-title">English</div><div class="cell-subtitle">Ms. Das</div></td>
-            <td></td>
-            <td><div class="cell-title">Biology</div><div class="cell-subtitle">Mrs. Mehta</div></td>
-            <td></td>
-          </tr>
-          <tr>
-            <th>Wednesday</th>
-            <td><div class="cell-title">History</div><div class="cell-subtitle">Mr. Verma</div></td>
-            <td></td>
-            <td><div class="cell-title">Mathematics</div><div class="cell-subtitle">Mr. Sharma</div></td>
-            <td></td>
-            <td></td>
-            <td><div class="cell-title">Geography</div><div class="cell-subtitle">Ms. Roy</div></td>
-          </tr>
-          <tr>
-            <th>Thursday</th>
-            <td><div class="cell-title">Physics</div><div class="cell-subtitle">Ms. Kapoor</div></td>
-            <td></td>
-            <td><div class="cell-title">Chemistry</div><div class="cell-subtitle">Mr. Ramesh</div></td>
-            <td></td>
-            <td><div class="cell-title">Computer Science</div><div class="cell-subtitle">Mr. Iyer</div></td>
-            <td></td>
-          </tr>
-          <tr>
-            <th>Friday</th>
-            <td></td>
-            <td><div class="cell-title">English</div><div class="cell-subtitle">Ms. Das</div></td>
-            <td><div class="cell-title">Mathematics</div><div class="cell-subtitle">Mr. Sharma</div></td>
-            <td></td>
-            <td><div class="cell-title">Biology</div><div class="cell-subtitle">Mrs. Mehta</div></td>
-            <td></td>
-          </tr>
-          <tr>
-            <th>Saturday</th>
-            <td><div class="cell-title">Yoga</div><div class="cell-subtitle">Ms. Nair</div></td>
-            <td><div class="cell-title">Library</div><div class="cell-subtitle">Mr. Khan</div></td>
-            <td></td>
-            <td></td>
-            <td><div class="cell-title">Art</div><div class="cell-subtitle">Ms. Joshi</div></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="container">
+      <div style="display: flex; width: 200px ; height: 40px; margin-bottom:20px;">
+        <a href="/student/dashboard" style="height: 40px; width: 200px; padding: 0.5rem;
+        border-radius: 0.5rem;
+        border: none;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        display:block;
+        text-decoration: none;
+        
+        "> Back to dashboard</a>
+      </div>
+        <h2>📅 Weekly Timetable</h2>
+        <div class="table-wrapper">
+            <div id="loading" class="loading">Loading timetable...</div>
+            <table id="timetable">
+                <thead>
+                    <tr>
+                        <th>Day / Time</th>
+                        <th>09:00 - 10:00</th>
+                        <th>10:00 - 11:00</th>
+                        <th>11:00 - 12:00</th>
+                        <th>12:00 - 01:00</th>
+                        <th>02:00 - 03:00</th>
+                        <th>03:00 - 04:00</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Monday</th>
+                        <td data-day="Monday" data-time="09:00-10:00"></td>
+                        <td data-day="Monday" data-time="10:00-11:00"></td>
+                        <td data-day="Monday" data-time="11:00-12:00"></td>
+                        <td data-day="Monday" data-time="12:00-13:00"></td>
+                        <td data-day="Monday" data-time="14:00-15:00"></td>
+                        <td data-day="Monday" data-time="15:00-16:00"></td>
+                    </tr>
+                    <tr>
+                        <th>Tuesday</th>
+                        <td data-day="Tuesday" data-time="09:00-10:00"></td>
+                        <td data-day="Tuesday" data-time="10:00-11:00"></td>
+                        <td data-day="Tuesday" data-time="11:00-12:00"></td>
+                        <td data-day="Tuesday" data-time="12:00-13:00"></td>
+                        <td data-day="Tuesday" data-time="14:00-15:00"></td>
+                        <td data-day="Tuesday" data-time="15:00-16:00"></td>
+                    </tr>
+                    <tr>
+                        <th>Wednesday</th>
+                        <td data-day="Wednesday" data-time="09:00-10:00"></td>
+                        <td data-day="Wednesday" data-time="10:00-11:00"></td>
+                        <td data-day="Wednesday" data-time="11:00-12:00"></td>
+                        <td data-day="Wednesday" data-time="12:00-13:00"></td>
+                        <td data-day="Wednesday" data-time="14:00-15:00"></td>
+                        <td data-day="Wednesday" data-time="15:00-16:00"></td>
+                    </tr>
+                    <tr>
+                        <th>Thursday</th>
+                        <td data-day="Thursday" data-time="09:00-10:00"></td>
+                        <td data-day="Thursday" data-time="10:00-11:00"></td>
+                        <td data-day="Thursday" data-time="11:00-12:00"></td>
+                        <td data-day="Thursday" data-time="12:00-13:00"></td>
+                        <td data-day="Thursday" data-time="14:00-15:00"></td>
+                        <td data-day="Thursday" data-time="15:00-16:00"></td>
+                    </tr>
+                    <tr>
+                        <th>Friday</th>
+                        <td data-day="Friday" data-time="09:00-10:00"></td>
+                        <td data-day="Friday" data-time="10:00-11:00"></td>
+                        <td data-day="Friday" data-time="11:00-12:00"></td>
+                        <td data-day="Friday" data-time="12:00-13:00"></td>
+                        <td data-day="Friday" data-time="14:00-15:00"></td>
+                        <td data-day="Friday" data-time="15:00-16:00"></td>
+                    </tr>
+                    <tr>
+                        <th>Saturday</th>
+                        <td data-day="Saturday" data-time="09:00-10:00"></td>
+                        <td data-day="Saturday" data-time="10:00-11:00"></td>
+                        <td data-day="Saturday" data-time="11:00-12:00"></td>
+                        <td data-day="Saturday" data-time="12:00-13:00"></td>
+                        <td data-day="Saturday" data-time="14:00-15:00"></td>
+                        <td data-day="Saturday" data-time="15:00-16:00"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-  </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const timeSlots = {
+                "09:00-10:00": "09:00:00",
+                "10:00-11:00": "10:00:00",
+                "11:00-12:00": "11:00:00",
+                "12:00-13:00": "12:00:00",
+                "14:00-15:00": "14:00:00",
+                "15:00-16:00": "15:00:00"
+            };
+
+            // Fetch lectures from API
+            fetch('/api/lectures')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        populateTimetable(data.lectures);
+                    } else {
+                        console.error('Error fetching lectures:', data.error);
+                    }
+                    document.getElementById('loading').style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error fetching lectures:', error);
+                    document.getElementById('loading').style.display = 'none';
+                });
+            
+            // Populate timetable with lectures
+            function populateTimetable(lectures) {
+                // Clear existing content
+                const cells = document.querySelectorAll('td[data-day]');
+                cells.forEach(cell => {
+                    cell.innerHTML = '<div class="empty-cell">No lecture</div>';
+                });
+                
+                // Place lectures in the timetable
+                lectures.forEach(lecture => {
+                    const day = lecture.day_of_week;
+                    const startTime = lecture.start_time.substring(0, 5);
+                    const endTime = lecture.end_time.substring(0, 5);
+                    
+                    // Find matching time slot
+                    for (const [slot, time] of Object.entries(timeSlots)) {
+                        const slotStart = time.substring(0, 5);
+                        if (startTime === slotStart) {
+                            const cell = document.querySelector(`td[data-day="${day}"][data-time="${slot}"]`);
+                            
+                            if (cell) {
+                                cell.innerHTML = `
+                                    <div class="cell-title">${lecture.subject}</div>
+                                    <div class="cell-subtitle">${lecture.teacher_name}</div>
+                                `;
+                            }
+                            break;
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
+
 </html>
