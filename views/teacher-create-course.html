@@ -1,0 +1,361 @@
+-course.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Course - EduSync</title>
+    <link rel="stylesheet" href="/css/style2.css" />
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-y: auto;
+            background: linear-gradient(135deg, var(--d), #1b263b);
+            font-family: system-ui, sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border-radius: var(--r);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h2 {
+            font-size: 2rem;
+            color: #40c4ff;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        form input,
+        form textarea,
+        form button {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        form input,
+        form textarea {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+        
+        form textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        form button {
+            background: linear-gradient(45deg, #40c4ff, #00bcd4);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .success-message {
+            color: #4caf50;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 0.5rem;
+        }
+        
+        .error-message {
+            color: #e53935;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(229, 57, 53, 0.1);
+            border-radius: 0.5rem;
+        }
+        
+        .course-code-container {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.5rem;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+        
+        .course-code {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #40c4ff;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(45deg, #ff9800, #f57c00);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .copy-icon {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .back-link {
+            display: flex;
+            width: 200px;
+            height: 40px;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+        
+        .back-button {
+            height: 40px;
+            width: 200px;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            display: block;
+            text-decoration: none;
+            line-height: 1.5;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .label {
+            color: #40c4ff;
+            margin-bottom: 0.2rem;
+        }
+        
+        .copy-notification {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeInOut 2s ease-in-out;
+        }
+        
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            90% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+
+<body class="fade-in">
+    <main class="container">
+        <a href="/teacher/dashboard" class="back-link">
+            <div class="back-button">Back to dashboard</div>
+        </a>
+        <h2 style="margin-top:40px;">📚 Create a New Course</h2>
+
+        <!-- Course Create Form -->
+        <form id="createCourseForm">
+            <div class="label">Course Name*</div>
+            <input type="text" id="courseName" placeholder="e.g. Introduction to Computer Science" required />
+            
+            <div class="label">Course Description (optional)</div>
+            <textarea id="courseDescription" placeholder="Brief description of the course"></textarea>
+            
+            <button type="submit">Create Course</button>
+        </form>
+
+        <!-- Messages -->
+        <div id="messageContainer"></div>
+
+        <!-- Course Code Container -->
+        <div id="courseCodeContainer" class="course-code-container">
+            <p>Course created successfully! Share this code with your students:</p>
+            <div id="courseCode" class="course-code">------</div>
+            <button id="copyBtn" class="copy-btn">
+                <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy Code
+            </button>
+        </div>
+
+        <!-- Copy Notification -->
+        <div id="copyNotification" class="copy-notification">
+            Copied to clipboard!
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get teacher data from localStorage
+            const teacher = localStorage.getItem('user') || sessionStorage.getItem('user');
+            const teacherData = teacher ? JSON.parse(teacher) : null;
+            const teacherId = teacherData ? teacherData.PRN : null;
+            
+            // If no teacher ID found, show error
+            if (!teacherId) {
+                const messageContainer = document.getElementById('messageContainer');
+                const errorMessage = document.createElement('div');
+                errorMessage.classList.add('error-message');
+                errorMessage.textContent = 'You must be logged in as a teacher to create courses.';
+                messageContainer.appendChild(errorMessage);
+            }
+            
+            // Form submission
+            document.getElementById('createCourseForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const courseName = document.getElementById('courseName').value.trim();
+                const courseDescription = document.getElementById('courseDescription').value.trim();
+                
+                if (!courseName) return;
+                
+                const messageContainer = document.getElementById('messageContainer');
+                messageContainer.innerHTML = '';
+                
+                // Send request to create a course
+                fetch('/api/course/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        courseName,
+                        courseDescription,
+                        teacherId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Hide the course code container first (in case of multiple creations)
+                        document.getElementById('courseCodeContainer').style.display = 'none';
+                        
+                        // Show success message
+                        const successMessage = document.createElement('div');
+                        successMessage.classList.add('success-message');
+                        successMessage.textContent = 'Course created successfully!';
+                        messageContainer.appendChild(successMessage);
+                        
+                        // Display the course code
+                        const courseCodeContainer = document.getElementById('courseCodeContainer');
+                        const courseCodeElement = document.getElementById('courseCode');
+                        courseCodeElement.textContent = data.courseCode;
+                        courseCodeContainer.style.display = 'block';
+                        
+                        // Reset the form
+                        this.reset();
+                    } else {
+                        const errorMessage = document.createElement('div');
+                        errorMessage.classList.add('error-message');
+                        errorMessage.textContent = data.error || 'Failed to create course. Please try again.';
+                        messageContainer.appendChild(errorMessage);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error creating course:', error);
+                    const errorMessage = document.createElement('div');
+                    errorMessage.classList.add('error-message');
+                    errorMessage.textContent = 'An error occurred. Please try again.';
+                    messageContainer.appendChild(errorMessage);
+                });
+            });
+            
+            // Copy to clipboard functionality
+            document.getElementById('copyBtn').addEventListener('click', function() {
+                const courseCode = document.getElementById('courseCode').textContent;
+                
+                // Use the Clipboard API
+                navigator.clipboard.writeText(courseCode).then(function() {
+                    // Show notification
+                    const notification = document.getElementById('copyNotification');
+                    notification.style.display = 'block';
+                    
+                    // Hide after animation completes
+                    setTimeout(function() {
+                        notification.style.display = 'none';
+                    }, 2000);
+                    
+                    // Change button text temporarily
+                    const originalText = this.innerHTML;
+                    this.innerHTML = `
+                        <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Copied!
+                    `;
+                    
+                    // Revert button text after delay
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 2000);
+                }.bind(this)).catch(function(err) {
+                    console.error('Could not copy text: ', err);
+                    alert('Failed to copy to clipboard. Please copy manually.');
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -75,6 +75,9 @@ app.get('/student-login',(req, res)=>{
     app.get('/teacher/assignments',(req, res)=>{
       res.sendFile(path.join(__dirname, '../views', 'teacher-assignments.html'));
     })
+    app.get('/teacher/create-course',(req, res)=>{
+      res.sendFile(path.join(__dirname, '../views', 'teacher-create-course.html'));
+    })
     
 
     
